@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Biswajit Chandra Das — AI & Data Analytics Enthusiast, Researcher, and Technology Innovator. Exploring Machine Learning, Generative AI, Cybersecurity, and Data Science." />
+  <meta name="keywords" content="Biswajit Chandra Das, AI researcher, machine learning, data analytics, cybersecurity, generative AI, portfolio" />
+  <meta name="author" content="Biswajit Chandra Das" />
+  <meta property="og:title" content="Biswajit Chandra Das | AI & Research Portfolio" />
+  <meta property="og:description" content="AI & Data Analytics Enthusiast. Researcher. Innovator." />
+  <meta property="og:type" content="website" />
+  <title>Biswajit Chandra Das | AI & Research Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Particle Canvas Background -->
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- Custom Cursor -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-logo">
+      <span class="logo-bracket">[</span>BCD<span class="logo-bracket">]</span>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#hero" class="nav-link">Home</a></li>
+      <li><a href="#about" class="nav-link">About</a></li>
+      <li><a href="#education" class="nav-link">Education</a></li>
+      <li><a href="#research" class="nav-link">Research</a></li>
+      <li><a href="#skills" class="nav-link">Skills</a></li>
+      <li><a href="#projects" class="nav-link">Projects</a></li>
+      <li><a href="#certifications" class="nav-link">Certifications</a></li>
+      <li><a href="#contact" class="nav-link">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <!-- ============================================================
+         HERO SECTION
+    ============================================================ -->
+    <section id="hero" class="hero-section">
+      <div class="hero-grid-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-tag reveal-up">
+          <span class="tag-dot"></span>
+          Available for Research Collaboration
+        </div>
+        <h1 class="hero-name reveal-up delay-1">
+          Biswajit<br /><span class="name-accent">Chandra Das</span>
+        </h1>
+        <div class="hero-typing-wrapper reveal-up delay-2">
+          <span class="typing-prefix">_</span>
+          <span class="typing-text" id="typingText"></span>
+          <span class="typing-cursor">|</span>
+        </div>
+        <p class="hero-tagline reveal-up delay-3">
+          Transforming data into insight. Research into reality.<br />
+          Intelligence into impact.
+        </p>
+        <div class="hero-cta reveal-up delay-4">
+          <a href="#research" class="btn btn-primary">View Research</a>
+          <a href="#contact" class="btn btn-ghost">Get In Touch</a>
+        </div>
+        <div class="hero-stats reveal-up delay-5">
+          <div class="stat-item">
+            <span class="stat-number">4+</span>
+            <span class="stat-label">Publications</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number">12+</span>
+            <span class="stat-label">Tech Skills</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number">∞</span>
+            <span class="stat-label">Curiosity</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="orbit-ring orbit-1"></div>
+        <div class="orbit-ring orbit-2"></div>
+        <div class="orbit-ring orbit-3"></div>
+        <div class="orbit-center">
+          <div class="orbit-icon">🧠</div>
+          <div class="orbit-pulse"></div>
+        </div>
+        <div class="orbit-node node-1">ML</div>
+        <div class="orbit-node node-2">AI</div>
+        <div class="orbit-node node-3">🔒</div>
+        <div class="orbit-node node-4">📊</div>
+        <div class="orbit-node node-5">⛓️</div>
+        <div class="orbit-node node-6">🔬</div>
+      </div>
+      <div class="scroll-indicator">
+        <span>Scroll</span>
+        <div class="scroll-line"></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         ABOUT SECTION
+    ============================================================ -->
+    <section id="about" class="about-section section">
+      <div class="container">
+        <div class="section-label reveal-up">about.me</div>
+        <h2 class="section-title reveal-up delay-1">The Mind Behind<br /><span class="gradient-text">the Machine</span></h2>
+        <div class="about-grid">
+          <div class="about-text reveal-left">
+            <p class="about-lead">
+              I am <strong>Biswajit Chandra Das</strong> — an AI & Data Analytics enthusiast whose curiosity about how machines learn has evolved into a deep passion for research, innovation, and responsible technology.
+            </p>
+            <p>
+              My journey sits at the intersection of <strong>Artificial Intelligence, Machine Learning, Cybersecurity,</strong> and <strong>Generative AI</strong>. I don't just study technology — I interrogate it, question it, and ask how it can be shaped to serve humanity better.
+            </p>
+            <p>
+              Whether it's building models that detect financial fraud, analyzing scam patterns in cryptocurrency ecosystems, or exploring how AI fortifies digital defenses, my work is driven by one core belief: <em>data, when understood deeply, becomes a force for good.</em>
+            </p>
+            <p>
+              I approach every problem with a researcher's rigor and a builder's restlessness — continuously learning, persistently experimenting, and never satisfied with surface-level answers.
+            </p>
+            <div class="about-pillars">
+              <div class="pillar-item">
+                <span class="pillar-icon">🔬</span>
+                <span>Research-Driven</span>
+              </div>
+              <div class="pillar-item">
+                <span class="pillar-icon">📡</span>
+                <span>Data-Informed</span>
+              </div>
+              <div class="pillar-item">
+                <span class="pillar-icon">⚡</span>
+                <span>Impact-Focused</span>
+              </div>
+              <div class="pillar-item">
+                <span class="pillar-icon">🌐</span>
+                <span>Globally Curious</span>
+              </div>
+            </div>
+          </div>
+          <div class="about-card-stack reveal-right">
+            <div class="info-card glass-card">
+              <div class="card-icon">📍</div>
+              <div class="card-content">
+                <span class="card-label">Location</span>
+                <span class="card-value">Los Angeles, California</span>
+              </div>
+            </div>
+            <div class="info-card glass-card">
+              <div class="card-icon">🎓</div>
+              <div class="card-content">
+                <span class="card-label">Institution</span>
+                <span class="card-value">Los Angeles City College</span>
+              </div>
+            </div>
+            <div class="info-card glass-card">
+              <div class="card-icon">🔭</div>
+              <div class="card-content">
+                <span class="card-label">Focus Areas</span>
+                <span class="card-value">AI · ML · Cybersecurity · GenAI</span>
+              </div>
+            </div>
+            <div class="info-card glass-card">
+              <div class="card-icon">📄</div>
+              <div class="card-content">
+                <span class="card-label">Publications</span>
+                <span class="card-value">4 Research Papers (2024–2025)</span>
+              </div>
+            </div>
+            <div class="info-card glass-card highlight-card">
+              <div class="card-icon">💡</div>
+              <div class="card-content">
+                <span class="card-label">Current Mission</span>
+                <span class="card-value">Bridging AI research with real-world solutions</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         EDUCATION SECTION
+    ============================================================ -->
+    <section id="education" class="education-section section">
+      <div class="container">
+        <div class="section-label reveal-up">education.path</div>
+        <h2 class="section-title reveal-up delay-1">Academic <span class="gradient-text">Foundation</span></h2>
+        <div class="timeline">
+          <div class="timeline-line"></div>
+
+          <div class="timeline-item reveal-left">
+            <div class="timeline-dot">
+              <div class="dot-inner"></div>
+            </div>
+            <div class="timeline-card glass-card">
+              <div class="timeline-header">
+                <div class="institution-badge">LACC</div>
+                <span class="timeline-year">Active</span>
+              </div>
+              <h3 class="timeline-title">Associate Degree</h3>
+              <p class="timeline-institution">Los Angeles City College</p>
+              <p class="timeline-desc">
+                Building a rigorous academic foundation across computer science, critical thinking, and technology analytics. Coursework spans computational logic, information systems, and data fundamentals — all converging toward a research-oriented technology career.
+              </p>
+              <div class="timeline-tags">
+                <span class="tag">Computer Science</span>
+                <span class="tag">Information Systems</span>
+                <span class="tag">Critical Thinking</span>
+                <span class="tag">Technology Analytics</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-item reveal-right">
+            <div class="timeline-dot">
+              <div class="dot-inner pulse-dot"></div>
+            </div>
+            <div class="timeline-card glass-card active-card">
+              <div class="timeline-header">
+                <div class="institution-badge badge-active">ONGOING</div>
+                <span class="timeline-year">2024–Present</span>
+              </div>
+              <h3 class="timeline-title">Self-Directed Research & Learning</h3>
+              <p class="timeline-institution">Independent Study & Publications</p>
+              <p class="timeline-desc">
+                Beyond formal coursework, actively pursuing advanced knowledge in machine learning, artificial intelligence, and data analytics through independent research, published academic papers, and continuous skill development.
+              </p>
+              <div class="timeline-tags">
+                <span class="tag tag-glow">Machine Learning</span>
+                <span class="tag tag-glow">Artificial Intelligence</span>
+                <span class="tag tag-glow">Data Analytics</span>
+                <span class="tag tag-glow">Generative AI</span>
+                <span class="tag tag-glow">Cybersecurity</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Learning Interests -->
+        <div class="learning-grid reveal-up">
+          <h3 class="sub-section-title">Areas of Deep Interest</h3>
+          <div class="interest-cards">
+            <div class="interest-card glass-card">
+              <div class="interest-icon">🤖</div>
+              <h4>Artificial Intelligence</h4>
+              <p>Exploring neural architectures, large language models, and AI-driven automation systems.</p>
+            </div>
+            <div class="interest-card glass-card">
+              <div class="interest-icon">📈</div>
+              <h4>Data Analytics</h4>
+              <p>Transforming raw datasets into strategic insights through visualization and statistical modeling.</p>
+            </div>
+            <div class="interest-card glass-card">
+              <div class="interest-icon">🔒</div>
+              <h4>Cybersecurity AI</h4>
+              <p>Applying machine learning to threat detection, anomaly identification, and defense systems.</p>
+            </div>
+            <div class="interest-card glass-card">
+              <div class="interest-icon">✨</div>
+              <h4>Generative AI</h4>
+              <p>Studying diffusion models, LLMs, and the creative/ethical frontiers of generative systems.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         RESEARCH SECTION
+    ============================================================ -->
+    <section id="research" class="research-section section">
+      <div class="container">
+        <div class="section-label reveal-up">research.publications</div>
+        <h2 class="section-title reveal-up delay-1">Published <span class="gradient-text">Research</span></h2>
+        <p class="section-subtitle reveal-up delay-2">Peer-reviewed work at the frontier of AI, machine learning, and cybersecurity.</p>
+
+        <div class="research-grid">
+
+          <article class="research-card glass-card reveal-up" tabindex="0">
+            <div class="research-card-inner">
+              <div class="research-meta">
+                <span class="research-venue">SSRN</span>
+                <span class="research-year">2024</span>
+              </div>
+              <div class="research-number">01</div>
+              <h3 class="research-title">Machine Learning in Cybersecurity: Harnessing AI for Defense</h3>
+              <p class="research-abstract">
+                A comprehensive analysis of how machine learning algorithms can be leveraged to strengthen cybersecurity defenses — from anomaly detection to intelligent threat response systems.
+              </p>
+              <div class="research-tags">
+                <span class="r-tag">Machine Learning</span>
+                <span class="r-tag">Cybersecurity</span>
+                <span class="r-tag">AI Defense</span>
+              </div>
+              <div class="research-footer">
+                <span class="research-journal">SSRN Electronic Journal</span>
+                <a href="#" class="research-link" aria-label="View paper">→</a>
+              </div>
+            </div>
+            <div class="research-glow"></div>
+          </article>
+
+          <article class="research-card glass-card reveal-up delay-1" tabindex="0">
+            <div class="research-card-inner">
+              <div class="research-meta">
+                <span class="research-venue">JoE</span>
+                <span class="research-year">2025</span>
+              </div>
+              <div class="research-number">02</div>
+              <h3 class="research-title">Detecting Cryptocurrency Scams in the USA: A Machine Learning-Based Analysis</h3>
+              <p class="research-abstract">
+                A data-driven investigation into cryptocurrency scam patterns and behavioral signatures in the US market, employing ML classification models to identify and predict fraudulent activity.
+              </p>
+              <div class="research-tags">
+                <span class="r-tag">Cryptocurrency</span>
+                <span class="r-tag">Fraud Detection</span>
+                <span class="r-tag">Behavioral Analysis</span>
+              </div>
+              <div class="research-footer">
+                <span class="research-journal">Journal of Ecohumanism</span>
+                <a href="#" class="research-link" aria-label="View paper">→</a>
+              </div>
+            </div>
+            <div class="research-glow"></div>
+          </article>
+
+          <article class="research-card glass-card reveal-up delay-2" tabindex="0">
+            <div class="research-card-inner">
+              <div class="research-meta">
+                <span class="research-venue">JoE</span>
+                <span class="research-year">2025</span>
+              </div>
+              <div class="research-number">03</div>
+              <h3 class="research-title">Leveraging Machine Learning for Insights and Predictions in Synthetic E-commerce Data</h3>
+              <p class="research-abstract">
+                Explores predictive analytics and behavioral modeling on synthetic e-commerce datasets, demonstrating ML's capacity to uncover purchasing patterns and business intelligence in the US market.
+              </p>
+              <div class="research-tags">
+                <span class="r-tag">E-commerce</span>
+                <span class="r-tag">Predictive Analytics</span>
+                <span class="r-tag">Synthetic Data</span>
+              </div>
+              <div class="research-footer">
+                <span class="research-journal">Journal of Ecohumanism</span>
+                <a href="#" class="research-link" aria-label="View paper">→</a>
+              </div>
+            </div>
+            <div class="research-glow"></div>
+          </article>
+
+          <article class="research-card glass-card reveal-up delay-3" tabindex="0">
+            <div class="research-card-inner">
+              <div class="research-meta">
+                <span class="research-venue">IN PRESS</span>
+                <span class="research-year">2025</span>
+              </div>
+              <div class="research-number">04</div>
+              <h3 class="research-title">ML-Based Detection and Analysis of Suspicious Activities in Bitcoin Wallet Transactions</h3>
+              <p class="research-abstract">
+                Applies machine learning techniques to the detection and forensic analysis of anomalous Bitcoin wallet behavior, contributing to blockchain security and financial crime prevention in the USA.
+              </p>
+              <div class="research-tags">
+                <span class="r-tag">Bitcoin</span>
+                <span class="r-tag">Blockchain Security</span>
+                <span class="r-tag">Anomaly Detection</span>
+              </div>
+              <div class="research-footer">
+                <span class="research-journal">Forthcoming</span>
+                <a href="#" class="research-link" aria-label="View paper">→</a>
+              </div>
+            </div>
+            <div class="research-glow"></div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SKILLS SECTION
+    ============================================================ -->
+    <section id="skills" class="skills-section section">
+      <div class="container">
+        <div class="section-label reveal-up">technical.skills</div>
+        <h2 class="section-title reveal-up delay-1">Skill <span class="gradient-text">Arsenal</span></h2>
+
+        <div class="skills-layout">
+          <!-- Left: Skill Bars -->
+          <div class="skill-bars reveal-left">
+            <h3 class="sub-section-title">Core Proficiencies</h3>
+            <div class="skill-bar-item" data-skill="90">
+              <div class="skill-bar-header">
+                <span class="skill-name">🐍 Python</span>
+                <span class="skill-pct">90%</span>
+              </div>
+              <div class="skill-bar-track">
+                <div class="skill-bar-fill" data-width="90"></div>
+              </div>
+            </div>
+            <div class="skill-bar-item" data-skill="85">
+              <div class="skill-bar-header">
+                <span class="skill-name">🤖 Machine Learning</span>
+                <span class="skill-pct">85%</span>
+              </div>
+              <div class="skill-bar-track">
+                <div class="skill-bar-fill" data-width="85"></div>
+              </div>
+            </div>
+            <div class="skill-bar-item" data-skill="88">
+              <div class="skill-bar-header">
+                <span class="skill-name">📊 Data Analytics</span>
+                <span class="skill-pct">88%</span>
+              </div>
+              <div class="skill-bar-track">
+                <div class="skill-bar-fill" data-width="88"></div>
+              </div>
+            </div>
+            <div class="skill-bar-item" data-skill="80">
+              <div class="skill-bar-header">
+                <span class="skill-name">✨ Generative AI</span>
+                <span class="skill-pct">80%</span>
+              </div>
+              <div class="skill-bar-track">
+                <div class="skill-bar-fill" data-width="80"></div>
+              </div>
+            </div>
+            <div class="skill-bar-item" data-skill="82">
+              <div class="skill-bar-header">
+                <span class="skill-name">📈 Data Visualization</span>
+                <span class="skill-pct">82%</span>
+              </div>
+              <div class="skill-bar-track">
+                <div class="skill-bar-fill" data-width="82"></div>
+              </div>
+            </div>
+            <div class="skill-bar-item" data-skill="78">
+              <div class="skill-bar-header">
+                <span class="skill-name">🔒 Cybersecurity Concepts</span>
+                <span class="skill-pct">78%</span>
+              </div>
+              <div class="skill-bar-track">
+                <div class="skill-bar-fill" data-width="78"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Skill Cards -->
+          <div class="skill-cards-grid reveal-right">
+            <h3 class="sub-section-title">Technology Stack</h3>
+            <div class="tech-cards">
+              <div class="tech-card glass-card">
+                <span class="tech-icon">🌐</span>
+                <span class="tech-name">HTML</span>
+              </div>
+              <div class="tech-card glass-card">
+                <span class="tech-icon">🎨</span>
+                <span class="tech-name">CSS</span>
+              </div>
+              <div class="tech-card glass-card">
+                <span class="tech-icon">⚡</span>
+                <span class="tech-name">JavaScript</span>
+              </div>
+              <div class="tech-card glass-card">
+                <span class="tech-icon">🖌️</span>
+                <span class="tech-name">UI/UX Design</span>
+              </div>
+              <div class="tech-card glass-card">
+                <span class="tech-icon">📝</span>
+                <span class="tech-name">Research Writing</span>
+              </div>
+              <div class="tech-card glass-card">
+                <span class="tech-icon">🛠️</span>
+                <span class="tech-name">AI Tools</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         PROJECTS / ACADEMIC INTERESTS
+    ============================================================ -->
+    <section id="projects" class="projects-section section">
+      <div class="container">
+        <div class="section-label reveal-up">academic.interests</div>
+        <h2 class="section-title reveal-up delay-1">Research <span class="gradient-text">Frontiers</span></h2>
+        <p class="section-subtitle reveal-up delay-2">Areas I am actively exploring, building, and thinking about.</p>
+
+        <div class="projects-grid">
+
+          <div class="project-card glass-card reveal-up">
+            <div class="project-header">
+              <div class="project-icon">🛡️</div>
+              <div class="project-status status-active">Active Interest</div>
+            </div>
+            <h3 class="project-title">AI-Powered Threat Detection Systems</h3>
+            <p class="project-desc">Researching how deep learning and anomaly detection algorithms can be integrated into real-time cybersecurity infrastructure to proactively identify and neutralize threats.</p>
+            <div class="project-stack">
+              <span>Python</span><span>ML</span><span>Cybersecurity</span>
+            </div>
+          </div>
+
+          <div class="project-card glass-card reveal-up delay-1">
+            <div class="project-header">
+              <div class="project-icon">⛓️</div>
+              <div class="project-status status-active">Active Interest</div>
+            </div>
+            <h3 class="project-title">Blockchain Transaction Analysis</h3>
+            <p class="project-desc">Exploring graph-based ML models and behavioral analytics to map and identify suspicious patterns in cryptocurrency ecosystems, contributing to financial integrity research.</p>
+            <div class="project-stack">
+              <span>Blockchain</span><span>Graph ML</span><span>Python</span>
+            </div>
+          </div>
+
+          <div class="project-card glass-card reveal-up delay-2">
+            <div class="project-header">
+              <div class="project-icon">🤖</div>
+              <div class="project-status status-explore">Exploring</div>
+            </div>
+            <h3 class="project-title">Large Language Models & GenAI Applications</h3>
+            <p class="project-desc">Investigating the application of LLMs for domain-specific research assistance, academic tool building, and responsible AI deployment in educational environments.</p>
+            <div class="project-stack">
+              <span>LLMs</span><span>GenAI</span><span>RAG</span>
+            </div>
+          </div>
+
+          <div class="project-card glass-card reveal-up delay-3">
+            <div class="project-header">
+              <div class="project-icon">📊</div>
+              <div class="project-status status-explore">Exploring</div>
+            </div>
+            <h3 class="project-title">Predictive Analytics in Commerce</h3>
+            <p class="project-desc">Applying supervised and unsupervised learning to e-commerce datasets to uncover consumer behavior patterns, demand forecasting models, and business intelligence insights.</p>
+            <div class="project-stack">
+              <span>Pandas</span><span>Scikit-learn</span><span>Visualization</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         CERTIFICATIONS SECTION
+    ============================================================ -->
+    <section id="certifications" class="certifications-section section">
+      <div class="container">
+        <div class="section-label reveal-up">credentials.verified</div>
+        <h2 class="section-title reveal-up delay-1">Certifications &amp; <span class="gradient-text">Credentials</span></h2>
+
+        <div class="cert-grid">
+
+          <div class="cert-card glass-card reveal-up">
+            <div class="cert-badge">
+              <div class="cert-logo ms-logo">
+                <span>MS</span>
+              </div>
+              <div class="cert-verified">✓ Verified</div>
+            </div>
+            <div class="cert-content">
+              <h3 class="cert-title">Career Essentials in Generative AI</h3>
+              <p class="cert-issuer">Microsoft &amp; LinkedIn</p>
+              <p class="cert-desc">
+                A comprehensive certification covering the foundational principles of Generative AI, including large language models, prompt engineering, responsible AI practices, and real-world business applications of generative technologies.
+              </p>
+              <div class="cert-meta">
+                <span class="cert-tag">Generative AI</span>
+                <span class="cert-tag">Microsoft</span>
+                <span class="cert-tag">LinkedIn Learning</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Placeholder for future certs -->
+          <div class="cert-card cert-placeholder glass-card reveal-up delay-1">
+            <div class="cert-badge">
+              <div class="cert-logo plus-logo">
+                <span>+</span>
+              </div>
+            </div>
+            <div class="cert-content">
+              <h3 class="cert-title">More Credentials Incoming</h3>
+              <p class="cert-issuer">Continuous Learning Journey</p>
+              <p class="cert-desc">
+                Actively pursuing advanced certifications in machine learning, data science, and cloud AI platforms. This section will grow with each new credential earned.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         CONTACT SECTION
+    ============================================================ -->
+    <section id="contact" class="contact-section section">
+      <div class="container">
+        <div class="section-label reveal-up">contact.connect</div>
+        <h2 class="section-title reveal-up delay-1">Let's <span class="gradient-text">Connect</span></h2>
+        <p class="section-subtitle reveal-up delay-2">
+          Open to research collaborations, academic discussions, and technology conversations.<br />
+          Reach out and let's explore ideas together.
+        </p>
+
+        <div class="contact-layout">
+
+          <div class="contact-links reveal-left">
+            <a href="mailto:your.email@example.com" class="contact-card glass-card" aria-label="Email">
+              <div class="contact-icon email-icon">✉️</div>
+              <div class="contact-info">
+                <span class="contact-type">Email</span>
+                <span class="contact-handle">your.email@example.com</span>
+              </div>
+              <span class="contact-arrow">→</span>
+            </a>
+            <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" class="contact-card glass-card" aria-label="LinkedIn">
+              <div class="contact-icon li-icon">in</div>
+              <div class="contact-info">
+                <span class="contact-type">LinkedIn</span>
+                <span class="contact-handle">linkedin.com/in/yourprofile</span>
+              </div>
+              <span class="contact-arrow">→</span>
+            </a>
+            <a href="https://scholar.google.com" target="_blank" rel="noopener noreferrer" class="contact-card glass-card" aria-label="Google Scholar">
+              <div class="contact-icon gs-icon">GS</div>
+              <div class="contact-info">
+                <span class="contact-type">Google Scholar</span>
+                <span class="contact-handle">View my publications</span>
+              </div>
+              <span class="contact-arrow">→</span>
+            </a>
+            <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" class="contact-card glass-card" aria-label="GitHub">
+              <div class="contact-icon gh-icon">⌥</div>
+              <div class="contact-info">
+                <span class="contact-type">GitHub</span>
+                <span class="contact-handle">github.com/yourusername</span>
+              </div>
+              <span class="contact-arrow">→</span>
+            </a>
+          </div>
+
+          <div class="contact-form-wrapper reveal-right">
+            <div class="contact-form glass-card">
+              <h3>Send a Message</h3>
+              <div class="form-group">
+                <label for="contactName">Name</label>
+                <input type="text" id="contactName" placeholder="Your name" autocomplete="name" />
+              </div>
+              <div class="form-group">
+                <label for="contactEmail">Email</label>
+                <input type="email" id="contactEmail" placeholder="your@email.com" autocomplete="email" />
+              </div>
+              <div class="form-group">
+                <label for="contactMsg">Message</label>
+                <textarea id="contactMsg" rows="4" placeholder="Tell me about your research interest or collaboration idea..."></textarea>
+              </div>
+              <button class="btn btn-primary full-width" id="sendBtn" type="button">Send Message</button>
+              <div class="form-note" id="formNote"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <p class="footer-name">Biswajit Chandra Das</p>
+        <p class="footer-tagline">AI Researcher · Data Enthusiast · Continuous Learner</p>
+        <p class="footer-copy">© <span id="footerYear"></span> Biswajit Chandra Das. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
