@@ -308,20 +308,15 @@
       return;
     }
 
-    btn.textContent = 'Sending...';
-    btn.disabled = true;
-
-    setTimeout(() => {
-      if (note) {
-        note.style.color = '#00ff9d';
-        note.textContent = '✓ Message sent! I\'ll get back to you soon.';
-      }
-      btn.textContent = 'Send Message';
-      btn.disabled = false;
-      document.getElementById('contactName').value  = '';
-      document.getElementById('contactEmail').value = '';
-      document.getElementById('contactMsg').value   = '';
-    }, 1400);
+    // This is a static site with no server, so the form opens the visitor's own
+    // email app with the message filled in (instead of pretending to send it).
+    const subject = encodeURIComponent('Portfolio message from ' + name);
+    const body = encodeURIComponent(msg + '\n\n— ' + name + ' (' + email + ')');
+    if (note) {
+      note.style.color = '#00ff9d';
+      note.textContent = 'Opening your email app… press Send there to deliver the message.';
+    }
+    window.location.href = 'mailto:biswajitchandrad4@gmail.com?subject=' + subject + '&body=' + body;
   });
 })();
 

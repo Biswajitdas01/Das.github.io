@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DailyWell — Daily Health Routine Tracker</title>
+<meta name="description" content="DailyWell helps you plan and track workouts, meals, water, sleep, recovery, supplements and healthy habits — privately, on any device.">
+<meta name="theme-color" content="#0f6e7a">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; manifest-src data:; object-src 'none'; base-uri 'self'; form-action 'self'">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f6e7a'/%3E%3Cpath d='M8 34h13l6-14 10 28 7-14h12' fill='none' stroke='white' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+:root{--bg:#f4f7f9;--card:#fff;--text:#12202f;--muted:#5a6b7b;--border:#dbe3ea;--primary:#0f6e7a;--primary-d:#0a525b;--primary-t:#e3f2f4;--accent:#15803d;--accent-t:#e3f6ea;--warn:#b45309;--warn-t:#fdf0dc;--danger:#b91c1c;--danger-t:#fde8e8;--shadow:0 1px 3px rgba(16,32,48,.08),0 4px 14px rgba(16,32,48,.05);--r:14px}
+html[data-theme=dark]{--bg:#0d151c;--card:#16212b;--text:#e8eef3;--muted:#9fb0bf;--border:#2a3946;--primary:#3fb7c4;--primary-d:#6fd0da;--primary-t:#12333a;--accent:#4ade80;--accent-t:#12301f;--warn:#fbbf24;--warn-t:#3a2c0e;--danger:#f87171;--danger-t:#3d1717;--shadow:0 1px 3px rgba(0,0,0,.4)}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text)}
+h1,h2,h3{line-height:1.25;margin:0 0 .5rem}h1{font-size:1.9rem}h2{font-size:1.15rem}h3{font-size:1.02rem}
+p{margin:.3rem 0 .7rem}a{color:var(--primary)}
+.muted{color:var(--muted)}.small{font-size:.86rem}.center{text-align:center}.hide{display:none!important}
+:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+.btn{font:inherit;font-weight:600;border:1px solid var(--border);background:var(--card);color:var(--text);padding:.55rem .95rem;border-radius:10px;cursor:pointer;min-height:42px}
+.btn:hover{border-color:var(--primary)}.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}html[data-theme=dark] .btn.primary{color:#04252a}
+.btn.primary:hover{background:var(--primary-d)}
+.btn.danger{background:var(--danger);border-color:var(--danger);color:#fff}
+.btn.ghost{background:transparent}.btn.sm{padding:.25rem .6rem;min-height:34px;font-size:.88rem}
+.btn.danger-t{color:var(--danger)}
+.btns{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.1rem;box-shadow:var(--shadow);margin-bottom:1rem}
+.grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.grid.two{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.stat .k{font-size:.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.stat .v{font-size:1.65rem;font-weight:700;margin:.1rem 0}.stat .s{font-size:.88rem;color:var(--muted)}
+.bar{height:10px;background:var(--border);border-radius:99px;overflow:hidden;margin-top:.5rem}
+.bar>span{display:block;height:100%;background:var(--primary);border-radius:99px;transition:width .3s}
+.bar.ok>span{background:var(--accent)}.bar.warn>span{background:var(--warn)}.bar.bad>span{background:var(--danger)}
+.badge{display:inline-block;font-size:.74rem;font-weight:600;padding:.1rem .5rem;border-radius:99px;background:var(--primary-t);color:var(--primary);margin-left:.25rem;vertical-align:middle}
+.badge.st-done,.badge.st-taken{background:var(--accent-t);color:var(--accent)}
+.badge.st-skipped,.badge.st-postponed{background:var(--warn-t);color:var(--warn)}
+.badge.bad{background:var(--danger-t);color:var(--danger)}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem}
+.chip{position:relative}.chip input{position:absolute;opacity:0;inset:0;cursor:pointer;width:100%;height:100%;margin:0}
+.chip span{display:inline-block;padding:.3rem .7rem;border:1px solid var(--border);border-radius:99px;font-size:.9rem;background:var(--card)}
+.chip input:checked+span{background:var(--primary);color:#fff;border-color:var(--primary)}
+html[data-theme=dark] .chip input:checked+span{color:#04252a}
+.chip input:focus-visible+span{outline:3px solid var(--primary);outline-offset:2px}
+.tag{display:inline-block;font-size:.8rem;padding:.05rem .5rem;border-radius:99px;border:1px solid var(--border);margin:.1rem .15rem .1rem 0}
+.field{margin-bottom:.8rem}.field label,.field .lbl{display:block;font-weight:600;font-size:.92rem;margin-bottom:.2rem}
+.field.chk label{display:flex;gap:.5rem;align-items:center;font-weight:500}
+input[type=text],input[type=email],input[type=password],input[type=number],input[type=date],input[type=time],select,textarea{font:inherit;width:100%;padding:.55rem .65rem;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);min-height:42px}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--primary)}
+[aria-invalid=true]{border-color:var(--danger)!important}
+.err{color:var(--danger);font-size:.84rem;min-height:0}.formmsg{padding:.5rem .7rem;border-radius:10px;margin:.4rem 0;font-size:.92rem}
+.formmsg.ok{background:var(--accent-t);color:var(--accent)}.formmsg.bad{background:var(--danger-t);color:var(--danger)}
+.req{color:var(--danger)}.req-note{font-size:.8rem;color:var(--muted)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.overlay{position:fixed;inset:0;background:rgba(8,16,24,.55);display:flex;align-items:flex-start;justify-content:center;padding:4vh .8rem;overflow:auto;z-index:50}
+.modal{background:var(--card);color:var(--text);border-radius:var(--r);width:100%;max-width:520px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.modal.wide{max-width:760px}
+.mh{display:flex;justify-content:space-between;align-items:center;padding:.9rem 1.1rem;border-bottom:1px solid var(--border)}.mh h2{margin:0}
+.x{background:none;border:0;font-size:1.2rem;cursor:pointer;color:var(--muted);min-width:40px;min-height:40px}
+.mb{padding:1rem 1.1rem}.mf{display:flex;justify-content:flex-end;gap:.5rem;padding:.8rem 1.1rem;border-top:1px solid var(--border)}
+#toasts{position:fixed;left:50%;transform:translateX(-50%);bottom:84px;z-index:80;display:flex;flex-direction:column;gap:.4rem;width:min(92vw,420px)}
+.toast{background:var(--text);color:var(--bg);padding:.65rem .9rem;border-radius:10px;box-shadow:var(--shadow);font-size:.94rem}
+.toast.err{background:var(--danger);color:#fff}.toast.ok{background:var(--accent);color:#fff}
+html[data-theme=dark] .toast.ok{color:#04210f}
+.shell{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
+.side{background:var(--card);border-right:1px solid var(--border);padding:1rem .7rem;position:sticky;top:0;height:100vh;overflow:auto;display:flex;flex-direction:column;gap:.2rem}
+.brand{display:flex;gap:.55rem;align-items:center;font-weight:800;font-size:1.2rem;padding:.3rem .5rem 1rem}
+.nav a{display:flex;gap:.6rem;align-items:center;padding:.55rem .7rem;border-radius:10px;color:var(--text);text-decoration:none;font-weight:500;cursor:pointer}
+.nav a:hover{background:var(--primary-t)}.nav a[aria-current=page]{background:var(--primary);color:#fff}
+html[data-theme=dark] .nav a[aria-current=page]{color:#04252a}
+main{padding:1.1rem 1.4rem 5rem;min-width:0;max-width:1200px;width:100%}
+.top{display:flex;justify-content:space-between;align-items:center;gap:.6rem;margin-bottom:.8rem;flex-wrap:wrap}
+.top h1{margin:0}
+.bottom{display:none}
+.banner{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;background:var(--warn-t);color:var(--text);border:1px solid var(--warn);border-radius:10px;padding:.5rem .8rem;margin-bottom:.6rem}
+.banner .grow{flex:1;min-width:160px}
+.notice{background:var(--primary-t);border:1px solid var(--primary);border-radius:10px;padding:.55rem .8rem;margin-bottom:.8rem;font-size:.92rem}
+.notice.warn{background:var(--warn-t);border-color:var(--warn)}
+.row{display:flex;gap:.7rem;align-items:center;padding:.55rem 0;border-bottom:1px solid var(--border);flex-wrap:wrap}.row:last-child{border:0}
+.row .t{min-width:76px;font-weight:700;color:var(--primary)}.row .grow{flex:1;min-width:150px}
+.row.done .grow strong{text-decoration:line-through;color:var(--muted)}
+ul.clean{list-style:none;padding:0;margin:0}
+.item .ih{display:flex;justify-content:space-between;gap:.5rem;align-items:flex-start}
+.meta{color:var(--muted);font-size:.9rem}.note{background:var(--bg);padding:.4rem .6rem;border-radius:8px;font-size:.92rem}
+.exl{margin:.5rem 0;padding:0;list-style:none}.exl li{display:flex;gap:.4rem;align-items:center;justify-content:space-between;padding:.2rem 0;border-bottom:1px dashed var(--border);flex-wrap:wrap}
+.empty{text-align:center;padding:1.5rem 1rem;color:var(--muted)}.empty>div{font-size:2rem}
+.tabs{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:.9rem}.tabs .btn[aria-pressed=true]{background:var(--primary);color:#fff;border-color:var(--primary)}
+html[data-theme=dark] .tabs .btn[aria-pressed=true]{color:#04252a}
+.datenav{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;margin-bottom:.9rem}.datenav input{width:auto}
+.filters{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.9rem}.filters>*{flex:1;min-width:130px}
+.ring{--p:0;width:130px;height:130px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--p)*1%),var(--border) 0);display:grid;place-items:center;margin:0 auto}
+.ring>div{width:100px;height:100px;border-radius:50%;background:var(--card);display:grid;place-items:center;text-align:center;font-weight:700;line-height:1.2}
+.chartbox{position:relative;height:260px}
+.heat{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;max-width:380px}
+.heat div{aspect-ratio:1;border-radius:6px;background:var(--border);font-size:.72rem;display:grid;place-items:center;color:var(--muted)}
+.heat .l1{background:#bfe3d0;color:#0b3d22}.heat .l2{background:#7fcb9e;color:#0b3d22}.heat .l3{background:#3fae6f;color:#fff}.heat .l4{background:#15803d;color:#fff}
+.heat .hd{background:none;font-weight:700}
+.timer{font-size:3rem;font-weight:800;text-align:center;font-variant-numeric:tabular-nums}
+.hero{background:linear-gradient(135deg,#0f6e7a,#0a3f55);color:#fff;padding:3.5rem 1.2rem 3rem;text-align:center}
+.hero h1{font-size:2.4rem;color:#fff}.hero p{max-width:640px;margin:.5rem auto 1.4rem;font-size:1.12rem;opacity:.95}
+.hero .btn{border-color:#fff}.hero .btn.primary{background:#fff;color:#0a3f55}
+.land{max-width:1080px;margin:0 auto;padding:1.6rem 1.1rem}
+.top-bar{display:flex;justify-content:space-between;align-items:center;max-width:1080px;margin:0 auto;padding:.9rem 1.1rem;color:#fff}
+.top-bar .btn{background:transparent;color:#fff;border-color:rgba(255,255,255,.6)}
+.loading{display:grid;place-items:center;min-height:60vh;color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+table.tbl{width:100%;border-collapse:collapse;font-size:.92rem}.tbl th,.tbl td{padding:.35rem .4rem;border-bottom:1px solid var(--border);text-align:left}
+@media (max-width:860px){
+ .shell{grid-template-columns:1fr}.side{display:none}
+ main{padding:.8rem .8rem 6rem}
+ .bottom{display:flex;position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--border);z-index:40;padding-bottom:env(safe-area-inset-bottom)}
+ .bottom a{flex:1;text-align:center;padding:.5rem .2rem;font-size:.72rem;color:var(--muted);text-decoration:none;cursor:pointer}
+ .bottom a span{display:block;font-size:1.3rem}.bottom a[aria-current=page]{color:var(--primary);font-weight:700}
+ .row2{grid-template-columns:1fr}.hero h1{font-size:1.8rem}
+}
+@media print{.side,.bottom,.top .btns,.btn,#banners,.filters,.datenav,.no-print{display:none!important}.shell{display:block}.card{box-shadow:none;break-inside:avoid}body{background:#fff;color:#000}}
+</style>
+</head>
+<body>
+<noscript><p style="padding:2rem">DailyWell needs JavaScript to run. Please enable it in your browser.</p></noscript>
+<div id="app"><div class="loading">Loading DailyWell…</div></div>
+<div id="toasts" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+'use strict';
+/* =====================================================================
+   DailyWell — single-file app.
+   CONFIGURATION: paste your Supabase project URL and PUBLISHABLE (anon) key.
+   These two values are public by design. NEVER paste a service_role key here.
+   Leave the placeholders to run in Local Demo mode (data stays in this browser only).
+   ===================================================================== */
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';            // e.g. https://abcdefgh.supabase.co
+const SUPABASE_KEY = 'YOUR_SUPABASE_PUBLISHABLE_KEY'; // publishable key (sb_publishable_...) or legacy anon key
+
+const CLOUD = typeof window.supabase !== 'undefined' && /^https:\/\//.test(SUPABASE_URL) && !SUPABASE_URL.includes('YOUR_') && !SUPABASE_KEY.includes('YOUR_');
+const LK = 'dw_local_v1_';
+let sb = null;
+
+/* ---------- tiny helpers ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const pad = n => String(n).padStart(2, '0');
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const today = () => ymd(new Date());
+const parseYmd = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const addDays = (s, n) => { const d = parseYmd(s); d.setDate(d.getDate() + n); return ymd(d); };
+const dow = s => parseYmd(s).getDay();
+const isDate = s => typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s) && ymd(parseYmd(s)) === s;
+const isTime = s => typeof s === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(s);
+const T = t => (t ? String(t).slice(0, 5) : '');
+const mins = t => { const [h, m] = T(t).split(':').map(Number); return h * 60 + m; };
+const hmFrom = m => { m = ((Math.round(m) % 1440) + 1440) % 1440; return pad(Math.floor(m / 60)) + ':' + pad(m % 60); };
+const hm = d => pad(d.getHours()) + ':' + pad(d.getMinutes());
+const nowHM = () => hm(new Date());
+const uuid = () => (crypto.randomUUID ? crypto.randomUUID() : 'id' + Date.now() + Math.random().toString(16).slice(2));
+const weekStart = s => { const d = parseYmd(s); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return ymd(d); };
+const sum = (a, f = x => x) => a.reduce((t, x) => t + (Number(f(x)) || 0), 0);
+const avg = (a, f = x => x) => (a.length ? sum(a, f) / a.length : null);
+const sd = a => { if (a.length < 2) return 0; const m = avg(a); return Math.sqrt(sum(a, x => (x - m) ** 2) / a.length); };
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const num = (v, d = 0) => (v == null || isNaN(v) ? '—' : Number(v).toLocaleString(undefined, { maximumFractionDigits: d }));
+const cap = s => String(s || '').charAt(0).toUpperCase() + String(s || '').slice(1);
+const fmtDate = s => parseYmd(s).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+const fmtShort = s => parseYmd(s).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+const fmtT = t => { t = T(t); if (!t) return ''; if (S.set.time_format === '24') return t; const [h, m] = t.split(':').map(Number); return `${h % 12 || 12}:${pad(m)} ${h < 12 ? 'AM' : 'PM'}`; };
+const fmtDur = m => `${Math.floor(m / 60)}h ${pad(Math.round(m % 60))}m`;
+const dateRange = (a, b) => { const o = []; for (let d = a; d <= b && o.length < 800; d = addDays(d, 1)) o.push(d); return o; };
+const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const parseJSON = s => { try { return JSON.parse(s); } catch { return null; } };
+
+/* ---------- state ---------- */
+const DEF_SET = { units_weight: 'kg', units_length: 'cm', units_volume: 'ml', time_format: '12', theme: 'auto', calorie_target: 2200, protein_target: 120, carbs_target: 250, fat_target: 70, water_goal_ml: 2500, bed_time: '22:30', wake_time: '06:30', workouts_per_week_goal: 4, goal: 'maintain', diet: [], allergies: '', dislikes: '', quiet_start: null, quiet_end: null, wind_down_min: 30, water_reminder_hours: 0, browser_notifications: false, auto_reminders: true, height_cm: null, age: null, sex: null, activity: 'moderate', start_weight_kg: null, goal_weight_kg: null, onboarded: false };
+const S = { user: null, profile: {}, set: { ...DEF_SET }, cache: {}, page: 'dashboard', date: today(), tab: {}, f: {}, started: false, charts: {}, after: [], banners: [], fired: new Set(), snooze: {}, rep: { from: addDays(today(), -29), to: today(), ex: '', meas: 'weight_kg' } };
+const rows = t => S.cache[t] || [];
+const TABLES = ['routine_items', 'routine_log', 'workouts', 'workout_exercises', 'custom_exercises', 'equipment', 'foods', 'meals', 'meal_plans', 'grocery_items', 'water_logs', 'sleep_logs', 'recovery_sessions', 'soreness_logs', 'supplements', 'supplement_logs', 'body_measurements', 'habits', 'habit_logs', 'daily_checkins', 'reminders'];
+const CASCADE = { workouts: [['workout_exercises', 'workout_id']], routine_items: [['routine_log', 'item_id']], supplements: [['supplement_logs', 'supplement_id']], habits: [['habit_logs', 'habit_id']] };
+
+/* ---------- units ---------- */
+const CONV = {
+  weight: { f: () => (S.set.units_weight === 'lb' ? 2.20462 : 1), u: () => (S.set.units_weight === 'lb' ? 'lb' : 'kg') },
+  length: { f: () => (S.set.units_length === 'in' ? 1 / 2.54 : 1), u: () => (S.set.units_length === 'in' ? 'in' : 'cm') },
+  volume: { f: () => (S.set.units_volume === 'oz' ? 1 / 29.5735 : 1), u: () => (S.set.units_volume === 'oz' ? 'oz' : 'ml') }
+};
+const toD = (c, v) => (v == null ? null : Number(v) * CONV[c].f());
+const fromD = (c, v) => Math.round((v / CONV[c].f()) * 100) / 100;
+const dispN = (c, v, d = 1) => (v == null ? '—' : `${num(toD(c, v), d)} ${CONV[c].u()}`);
+
+/* ---------- errors, toasts ---------- */
+function toast(msg, kind = '') {
+  const el = document.createElement('div'); el.className = 'toast ' + kind; el.textContent = msg;
+  $('#toasts').appendChild(el); setTimeout(() => el.remove(), kind === 'err' ? 6000 : 3500);
+}
+function friendly(e) {
+  if (e && e.user) return e.message;
+  const c = e && (e.code || e.status);
+  if (!navigator.onLine || /fetch|network/i.test(String(e && e.message))) return 'Network problem. Check your connection and try again.';
+  if (c === '42501' || c === 403) return 'You do not have permission to do that.';
+  if (c === '23514' || c === '22003' || c === '22P02') return 'One of the values is outside the allowed range.';
+  if (c === '23505') return 'That entry already exists.';
+  if (c === '42P01' || c === 'PGRST205') return 'The database is not set up yet. Run supabase_setup.sql in your Supabase project.';
+  if (isAuthErr(e)) return 'Your session expired. Please log in again.';
+  return 'Something went wrong. Please try again.';
+}
+const isAuthErr = e => e && (e.status === 401 || e.code === 'PGRST301' || /jwt/i.test(String(e.message || '')));
+function handleErr(e) {
+  console.error('DailyWell error:', (e && (e.code || e.name)) || 'unknown');
+  toast(friendly(e), 'err');
+  if (isAuthErr(e) && CLOUD && S.user) sb.auth.signOut().catch(() => {});
+}
+const userErr = m => Object.assign(new Error(m), { user: true });
+
+/* ---------- data layer (Supabase, or localStorage in demo mode) ---------- */
+const DB = {
+  async loadAll() { await Promise.all(TABLES.map(async t => { S.cache[t] = await DB.fetch(t); })); },
+  async fetch(t) {
+    if (!CLOUD) return parseJSON(localStorage.getItem(LK + t)) || [];
+    let all = [], from = 0;
+    for (;;) {
+      const { data, error } = await sb.from(t).select('*').order('created_at', { ascending: true }).order('id').range(from, from + 999);
+      if (error) throw error;
+      all = all.concat(data); if (data.length < 1000 || from > 20000) break; from += 1000;
+    }
+    return all;
+  },
+  persist(t) { if (!CLOUD) localStorage.setItem(LK + t, JSON.stringify(S.cache[t])); },
+  async insertMany(t, arr) {
+    if (!arr.length) return [];
+    let out;
+    if (CLOUD) { const { data, error } = await sb.from(t).insert(arr).select(); if (error) throw error; out = data; }
+    else { const now = new Date().toISOString(); out = arr.map(r => ({ id: uuid(), user_id: 'local', is_demo: false, created_at: now, updated_at: now, ...r })); }
+    S.cache[t] = rows(t).concat(out); DB.persist(t); return out;
+  },
+  async insert(t, row) { return (await DB.insertMany(t, [row]))[0]; },
+  async update(t, id, patch) {
+    let r;
+    if (CLOUD) { const { data, error } = await sb.from(t).update(patch).eq('id', id).select().single(); if (error) throw error; r = data; }
+    else { const old = rows(t).find(x => x.id === id); r = { ...old, ...patch, updated_at: new Date().toISOString() }; }
+    S.cache[t] = rows(t).map(x => (x.id === id ? r : x)); DB.persist(t); return r;
+  },
+  async remove(t, id) {
+    if (CLOUD) { const { error } = await sb.from(t).delete().eq('id', id); if (error) throw error; }
+    S.cache[t] = rows(t).filter(x => x.id !== id); DB.persist(t);
+    (CASCADE[t] || []).forEach(([ct, col]) => { S.cache[ct] = rows(ct).filter(x => x[col] !== id); DB.persist(ct); });
+  },
+  async clearDemo() {
+    for (const t of TABLES) {
+      if (CLOUD) { const { error } = await sb.from(t).delete().eq('is_demo', true); if (error) throw error; }
+      S.cache[t] = rows(t).filter(x => !x.is_demo); DB.persist(t);
+    }
+  }
+};
+async function loadSettings() {
+  if (CLOUD) {
+    const [a, b] = await Promise.all([sb.from('user_settings').select('*').eq('user_id', S.user.id).maybeSingle(), sb.from('profiles').select('*').eq('id', S.user.id).maybeSingle()]);
+    if (a.error) throw a.error; if (b.error) throw b.error;
+    if (!a.data) { const r = await sb.from('user_settings').upsert({ user_id: S.user.id }, { onConflict: 'user_id' }).select().single(); if (r.error) throw r.error; a.data = r.data; }
+    S.set = { ...DEF_SET, ...a.data }; S.profile = b.data || {};
+  } else {
+    S.set = { ...DEF_SET, ...(parseJSON(localStorage.getItem(LK + 'settings')) || {}) };
+    S.profile = parseJSON(localStorage.getItem(LK + 'profile')) || { display_name: '', time_zone: Intl.DateTimeFormat().resolvedOptions().timeZone };
+  }
+}
+async function saveSettings(patch) {
+  if (CLOUD) { const { error } = await sb.from('user_settings').upsert({ user_id: S.user.id, ...patch }, { onConflict: 'user_id' }); if (error) throw error; }
+  S.set = { ...S.set, ...patch };
+  if (!CLOUD) localStorage.setItem(LK + 'settings', JSON.stringify(S.set));
+}
+async function saveProfile(patch) {
+  if (CLOUD) { const { error } = await sb.from('profiles').upsert({ id: S.user.id, ...patch }, { onConflict: 'id' }); if (error) throw error; }
+  S.profile = { ...S.profile, ...patch };
+  if (!CLOUD) localStorage.setItem(LK + 'profile', JSON.stringify(S.profile));
+}
+
+/* ---------- modal + confirm ---------- */
+function modal({ title, body, submit = 'Save', cancel = 'Cancel', onSubmit, wide, danger, onClose }) {
+  const wrap = document.createElement('div'); wrap.className = 'overlay';
+  wrap.innerHTML = `<form class="modal${wide ? ' wide' : ''}" role="dialog" aria-modal="true" aria-label="${esc(title)}" novalidate><div class="mh"><h2>${esc(title)}</h2><button type="button" class="x" data-close aria-label="Close">✕</button></div><div class="mb">${body}</div><div class="mf"><button type="button" class="btn ghost" data-close>${esc(cancel)}</button>${onSubmit ? `<button class="btn ${danger ? 'danger' : 'primary'}" type="submit">${esc(submit)}</button>` : ''}</div></form>`;
+  document.body.appendChild(wrap);
+  const prev = document.activeElement, form = wrap.querySelector('form');
+  const escKey = e => { if (e.key === 'Escape' && wrap === [...document.querySelectorAll('.overlay')].pop()) close(); };
+  let closed = false;
+  const close = () => { if (closed) return; closed = true; wrap.remove(); document.removeEventListener('keydown', escKey); if (prev && prev.focus && document.body.contains(prev)) prev.focus(); if (onClose) onClose(); };
+  document.addEventListener('keydown', escKey);
+  wrap.addEventListener('click', e => { if (e.target === wrap || e.target.closest('[data-close]')) close(); });
+  form.addEventListener('submit', async e => {
+    e.preventDefault(); const btn = form.querySelector('[type=submit]'); if (btn && btn.disabled) return; if (btn) btn.disabled = true;
+    try { const r = onSubmit ? await onSubmit(form, close) : true; if (r !== false) close(); } catch (err) { handleErr(err); } finally { if (btn) btn.disabled = false; }
+  });
+  setTimeout(() => { const f = form.querySelector('input:not([type=hidden]),select,textarea'); (f || form.querySelector('button')).focus(); }, 30);
+  return { close, form };
+}
+function confirmBox(msg, label = 'Delete', title = 'Please confirm') {
+  return new Promise(res => { let ok = false; modal({ title, body: `<p>${esc(msg)}</p>`, submit: label, danger: true, onSubmit: () => { ok = true; }, onClose: () => res(ok) }); });
+}
+
+/* ---------- form builder / validator ---------- */
+const opt = a => a.map(x => ({ v: x, l: cap(x) }));
+const WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const DAYOPTS = WD.map((l, v) => ({ v, l }));
+const MUSCLES = ['chest', 'back', 'shoulders', 'arms', 'legs', 'core', 'cardio', 'full body'];
+const MEALTYPES = ['breakfast', 'lunch', 'dinner', 'snack'];
+const flabel = f => esc(f.l) + (f.conv ? ` (${CONV[f.conv].u()})` : '');
+function fld(f, v) {
+  const id = 'f_' + f.k, req = f.req ? ' <span class="req" aria-hidden="true">*</span>' : '';
+  const L = flabel(f), val = f.conv && v != null ? Math.round(toD(f.conv, v) * 10) / 10 : (v ?? '');
+  let inp = '';
+  if (f.t === 'bool') return `<div class="field chk"><label><input type="checkbox" name="${f.k}" id="${id}" ${v ? 'checked' : ''}> ${L}</label></div>`;
+  if (f.t === 'textarea') inp = `<textarea id="${id}" name="${f.k}" rows="3" maxlength="${f.max || 1000}">${esc(val)}</textarea>`;
+  else if (f.t === 'select') inp = `<select id="${id}" name="${f.k}">${f.req ? '' : '<option value=""></option>'}${f.opts.map(o => `<option value="${esc(o.v)}"${String(o.v) === String(val) ? ' selected' : ''}>${esc(o.l)}</option>`).join('')}</select>`;
+  else if (f.t === 'range') { let o = '<option value=""></option>'; for (let i = f.min; i <= f.max; i++) o += `<option value="${i}"${String(i) === String(val) ? ' selected' : ''}>${i}</option>`; inp = `<select id="${id}" name="${f.k}">${o}</select>`; }
+  else if (f.t === 'checks') {
+    const set = new Set((v || []).map(String));
+    return `<div class="field"><div class="lbl" id="l_${f.k}">${L}${req}</div><div class="chips" role="group" aria-labelledby="l_${f.k}">${f.opts.map(o => `<label class="chip"><input type="checkbox" name="${f.k}" value="${esc(o.v)}"${set.has(String(o.v)) ? ' checked' : ''}><span>${esc(o.l)}</span></label>`).join('')}</div><div class="err" id="e_${f.k}" role="alert"></div></div>`;
+  } else {
+    const type = f.t === 'number' ? 'number' : f.t;
+    inp = `<input id="${id}" name="${f.k}" type="${type}" value="${esc(val)}" ${f.t === 'number' ? `inputmode="decimal" step="${f.conv ? 'any' : (f.step || 'any')}"` : ''} ${f.ph ? `placeholder="${esc(f.ph)}"` : ''} ${f.t === 'text' ? `maxlength="${f.max || 200}"` : ''} ${f.list ? `list="${f.list}"` : ''} ${f.t === 'text' ? 'autocomplete="off"' : ''}>`;
+  }
+  return `<div class="field"><label for="${id}">${L}${req}</label>${inp}${f.help ? `<div class="small muted">${esc(f.help)}</div>` : ''}<div class="err" id="e_${f.k}" role="alert"></div></div>`;
+}
+function readForm(form, fields) {
+  const out = {}, errs = {};
+  for (const f of fields) {
+    if (f.t === 'bool') { out[f.k] = !!form.elements[f.k].checked; continue; }
+    if (f.t === 'checks') {
+      const v = [...form.querySelectorAll(`input[name="${f.k}"]:checked`)].map(i => (f.num ? Number(i.value) : i.value));
+      if (f.req && !v.length) errs[f.k] = 'Choose at least one.'; out[f.k] = v; continue;
+    }
+    let v = (form.elements[f.k].value || '').trim();
+    if (v === '') { if (f.req) errs[f.k] = 'This field is required.'; out[f.k] = null; continue; }
+    if (f.t === 'number' || f.t === 'range') {
+      let n = Number(v);
+      if (!Number.isFinite(n)) { errs[f.k] = 'Enter a valid number.'; continue; }
+      if (f.conv) n = fromD(f.conv, n);
+      if ((f.int || f.t === 'range') && !Number.isInteger(n)) { errs[f.k] = 'Use a whole number.'; continue; }
+      if (f.min != null && n < f.min - 1e-6) { errs[f.k] = 'That value is too small.'; continue; }
+      if (f.max != null && n > f.max + 1e-6) { errs[f.k] = 'That value is too large.'; continue; }
+      out[f.k] = n;
+    } else if (f.t === 'date') {
+      if (!isDate(v) || v < '1990-01-01' || v > '2100-12-31') { errs[f.k] = 'Enter a valid date.'; continue; } out[f.k] = v;
+    } else if (f.t === 'time') {
+      if (!isTime(v)) { errs[f.k] = 'Enter a valid time.'; continue; } out[f.k] = v;
+    } else if (f.t === 'select') {
+      const o = f.opts.find(o => String(o.v) === v); if (!o) { errs[f.k] = 'Choose one of the options.'; continue; } out[f.k] = o.v;
+    } else {
+      if (v.length > (f.max || (f.t === 'textarea' ? 1000 : 200))) { errs[f.k] = 'That is too long.'; continue; } out[f.k] = v;
+    }
+  }
+  return { out, errs };
+}
+function showErrs(form, errs) {
+  form.querySelectorAll('.err').forEach(e => { e.textContent = ''; }); form.querySelectorAll('[aria-invalid]').forEach(e => e.removeAttribute('aria-invalid'));
+  Object.entries(errs).forEach(([k, m]) => { const e = form.querySelector('#e_' + k); if (e) e.textContent = m; const i = form.elements[k]; if (i && i.setAttribute) i.setAttribute('aria-invalid', 'true'); });
+  const first = form.querySelector('[aria-invalid]'); if (first) first.focus();
+}
+function setMsg(form, text, ok) { let m = form.querySelector('.formmsg'); if (!m) { m = document.createElement('div'); m.className = 'formmsg'; m.setAttribute('role', 'alert'); form.querySelector('.mb') ? form.querySelector('.mb').appendChild(m) : form.appendChild(m); } m.className = 'formmsg ' + (ok ? 'ok' : 'bad'); m.textContent = text; }
+
+/* ---------- entity definitions (generic add / edit / delete) ---------- */
+const parseTimes = s => {
+  if (!s) return [];
+  const parts = String(s).split(/[,;\s]+/).filter(Boolean), out = [];
+  for (const p of parts) { const m = /^(\d{1,2}):(\d{2})$/.exec(p); if (!m) return null; const t = pad(+m[1]) + ':' + m[2]; if (!isTime(t)) return null; out.push(t); }
+  return out;
+};
+const sleepDates = v => {
+  const wake = new Date(`${v.wake_date}T${v.wake_time}:00`);
+  const bedDay = v.bed_time > v.wake_time ? addDays(v.wake_date, -1) : v.wake_date;
+  return { wake, bed: new Date(`${bedDay}T${v.bed_time}:00`) };
+};
+const ENT = {
+  routine_items: { title: 'routine item', fields: [
+    { k: 'title', l: 'What', t: 'text', req: true, max: 120, ph: 'e.g. Morning stretch' },
+    { k: 'item_time', l: 'Time', t: 'time', req: true },
+    { k: 'category', l: 'Category', t: 'select', req: true, opts: opt(['wake', 'meal', 'workout', 'recovery', 'supplement', 'water', 'sleep', 'other']) },
+    { k: 'days', l: 'Repeat on', t: 'checks', num: true, req: true, opts: DAYOPTS },
+    { k: 'notes', l: 'Notes', t: 'textarea', max: 1000 },
+    { k: 'active', l: 'Active', t: 'bool' }],
+    defaults: () => ({ category: 'other', days: [1, 2, 3, 4, 5], active: true, item_time: '08:00' }) },
+  workouts: { title: 'workout', fields: [
+    { k: 'title', l: 'Name', t: 'text', req: true, max: 80, ph: 'e.g. Push day' },
+    { k: 'workout_date', l: 'Date', t: 'date', req: true },
+    { k: 'start_time', l: 'Planned start time', t: 'time' },
+    { k: 'duration_min', l: 'Duration (minutes)', t: 'number', min: 1, max: 600, int: true },
+    { k: 'type', l: 'Type', t: 'select', req: true, opts: opt(['strength', 'cardio', 'hiit', 'yoga', 'walking', 'running', 'cycling', 'swimming', 'sports', 'stretching', 'other']) },
+    { k: 'location', l: 'Location', t: 'select', req: true, opts: opt(['gym', 'home', 'outdoor', 'other']) },
+    { k: 'muscle_groups', l: 'Target muscle groups', t: 'checks', opts: opt(MUSCLES) },
+    { k: 'effort', l: 'Perceived effort (1–10)', t: 'range', min: 1, max: 10 },
+    { k: 'status', l: 'Status', t: 'select', req: true, opts: opt(['planned', 'done', 'skipped']) },
+    { k: 'notes', l: 'Notes', t: 'textarea', max: 1000 }],
+    defaults: () => ({ workout_date: S.date, status: 'planned', type: 'strength', location: 'gym', muscle_groups: [] }) },
+  workout_exercises: { title: 'exercise', fields: [
+    { k: 'exercise_name', l: 'Exercise', t: 'text', req: true, max: 120, list: 'exlist' },
+    { k: 'sets', l: 'Sets', t: 'number', req: true, min: 1, max: 50, int: true },
+    { k: 'reps', l: 'Reps (or seconds)', t: 'number', req: true, min: 1, max: 10000, int: true },
+    { k: 'weight_kg', l: 'Weight', t: 'number', conv: 'weight', min: 0, max: 2000 },
+    { k: 'rest_sec', l: 'Rest (seconds)', t: 'number', min: 0, max: 3600, int: true },
+    { k: 'notes', l: 'Notes', t: 'text', max: 500 }],
+    defaults: () => ({ sets: 3, reps: 10 }), extra: () => `<datalist id="exlist">${allExerciseNames().map(n => `<option value="${esc(n)}">`).join('')}</datalist>` },
+  custom_exercises: { title: 'custom exercise', fields: [
+    { k: 'name', l: 'Exercise name', t: 'text', req: true, max: 120 },
+    { k: 'muscle_group', l: 'Muscle group', t: 'select', req: true, opts: opt(MUSCLES) },
+    { k: 'notes', l: 'Notes', t: 'text', max: 500 }], defaults: () => ({ muscle_group: 'full body' }) },
+  equipment: { title: 'equipment', fields: [
+    { k: 'name', l: 'Equipment', t: 'text', req: true, max: 80, ph: 'e.g. Dumbbells' },
+    { k: 'quantity', l: 'Quantity', t: 'number', req: true, min: 0, max: 1000, int: true },
+    { k: 'weight_kg', l: 'Weight (each, optional)', t: 'number', conv: 'weight', min: 0, max: 2000 },
+    { k: 'owned', l: 'I own this', t: 'bool' },
+    { k: 'notes', l: 'Notes', t: 'text', max: 500 }], defaults: () => ({ quantity: 1, owned: true }) },
+  foods: { title: 'food', fields: [
+    { k: 'name', l: 'Food', t: 'text', req: true, max: 120 },
+    { k: 'serving', l: 'Serving size', t: 'text', max: 80, ph: 'e.g. 1 cup (240 g)' },
+    { k: 'calories', l: 'Calories (kcal)', t: 'number', min: 0, max: 10000 },
+    { k: 'protein_g', l: 'Protein (g)', t: 'number', min: 0, max: 2000 },
+    { k: 'carbs_g', l: 'Carbs (g)', t: 'number', min: 0, max: 2000 },
+    { k: 'fat_g', l: 'Fat (g)', t: 'number', min: 0, max: 2000 }] },
+  meals: { title: 'meal', fields: () => [
+    { k: 'food_pick', l: 'Fill in from my foods (optional)', t: 'select', virtual: true, opts: rows('foods').map(f => ({ v: f.id, l: f.name })) },
+    { k: 'meal_date', l: 'Date', t: 'date', req: true },
+    { k: 'meal_type', l: 'Meal', t: 'select', req: true, opts: opt(MEALTYPES) },
+    { k: 'meal_time', l: 'Time', t: 'time' },
+    { k: 'food_name', l: 'Food / dish', t: 'text', req: true, max: 120 },
+    { k: 'portion', l: 'Portion', t: 'text', max: 80 },
+    { k: 'calories', l: 'Calories (kcal)', t: 'number', min: 0, max: 10000, help: 'Leave blank if unknown — it will show as "not entered".' },
+    { k: 'protein_g', l: 'Protein (g)', t: 'number', min: 0, max: 2000 },
+    { k: 'carbs_g', l: 'Carbs (g)', t: 'number', min: 0, max: 2000 },
+    { k: 'fat_g', l: 'Fat (g)', t: 'number', min: 0, max: 2000 },
+    { k: 'notes', l: 'Notes', t: 'textarea', max: 500 }],
+    defaults: () => ({ meal_date: S.date, meal_type: 'breakfast' }),
+    afterOpen: form => { const p = form.elements.food_pick; if (!p) return; p.addEventListener('change', () => { const f = rows('foods').find(x => x.id === p.value); if (!f) return; const set = (k, v) => { if (form.elements[k]) form.elements[k].value = v ?? ''; }; set('food_name', f.name); set('portion', f.serving); set('calories', f.calories); set('protein_g', f.protein_g); set('carbs_g', f.carbs_g); set('fat_g', f.fat_g); }); } },
+  meal_plans: { title: 'planned meal', fields: [
+    { k: 'weekday', l: 'Day', t: 'select', req: true, opts: DAYOPTS },
+    { k: 'meal_type', l: 'Meal', t: 'select', req: true, opts: opt(MEALTYPES) },
+    { k: 'food_name', l: 'Food / dish', t: 'text', req: true, max: 120 },
+    { k: 'notes', l: 'Notes', t: 'text', max: 500 }], defaults: () => ({ weekday: dow(today()), meal_type: 'breakfast' }) },
+  water_logs: { title: 'water entry', fields: [
+    { k: 'log_date', l: 'Date', t: 'date', req: true },
+    { k: 'log_time', l: 'Time', t: 'time' },
+    { k: 'amount_ml', l: 'Amount', t: 'number', req: true, conv: 'volume', min: 1, max: 5000 }],
+    defaults: () => ({ log_date: S.date, log_time: nowHM() }) },
+  sleep_logs: { title: 'sleep entry', fields: [
+    { k: 'wake_date', l: 'Date you woke up', t: 'date', req: true },
+    { k: 'bed_time', l: 'Bedtime', t: 'time', req: true },
+    { k: 'wake_time', l: 'Wake-up time', t: 'time', req: true },
+    { k: 'quality', l: 'Sleep quality (1 = poor, 5 = great)', t: 'range', min: 1, max: 5 },
+    { k: 'is_nap', l: 'This is a nap', t: 'bool' },
+    { k: 'notes', l: 'Notes (caffeine, screen time, stress…)', t: 'textarea', max: 500 }],
+    defaults: () => ({ wake_date: S.date, bed_time: T(S.set.bed_time), wake_time: T(S.set.wake_time) }),
+    fromRow: r => ({ wake_date: r.sleep_date, bed_time: hm(new Date(r.bed_at)), wake_time: hm(new Date(r.wake_at)), quality: r.quality, is_nap: r.is_nap, notes: r.notes }),
+    check: v => { if (v.bed_time === v.wake_time) return 'Bedtime and wake-up time must be different.'; const d = sleepDates(v); if ((d.wake - d.bed) / 60000 > 1080) return 'That is longer than 18 hours of sleep. Please check the times.'; return null; },
+    toRow: v => { const d = sleepDates(v); return { sleep_date: v.wake_date, bed_at: d.bed.toISOString(), wake_at: d.wake.toISOString(), quality: v.quality, is_nap: v.is_nap, notes: v.notes }; } },
+  recovery_sessions: { title: 'recovery session', fields: [
+    { k: 'session_date', l: 'Date', t: 'date', req: true },
+    { k: 'type', l: 'Type', t: 'select', req: true, opts: opt(['massage', 'foam rolling', 'stretching', 'mobility', 'sauna / steam', 'ice bath', 'meditation', 'breathing', 'skincare', 'other']) },
+    { k: 'duration_min', l: 'Duration (minutes)', t: 'number', min: 1, max: 600, int: true },
+    { k: 'body_area', l: 'Body area', t: 'text', max: 80, ph: 'e.g. lower back' },
+    { k: 'notes', l: 'Notes', t: 'textarea', max: 500 }], defaults: () => ({ session_date: S.date, type: 'massage' }) },
+  soreness_logs: { title: 'soreness entry', fields: [
+    { k: 'log_date', l: 'Date', t: 'date', req: true },
+    { k: 'body_area', l: 'Body area', t: 'select', req: true, opts: opt(['neck', 'shoulders', 'upper back', 'lower back', 'chest', 'arms', 'core', 'hips', 'quads', 'hamstrings', 'calves', 'feet']) },
+    { k: 'level', l: 'Soreness (0 = none, 10 = severe)', t: 'range', req: true, min: 0, max: 10 },
+    { k: 'notes', l: 'Notes', t: 'text', max: 500 }], defaults: () => ({ log_date: S.date, body_area: 'lower back' }) },
+  supplements: { title: 'supplement / medicine', fields: [
+    { k: 'name', l: 'Name', t: 'text', req: true, max: 120 },
+    { k: 'dose', l: 'Dose (as prescribed or on the label)', t: 'number', min: 0, max: 100000 },
+    { k: 'unit', l: 'Unit', t: 'text', max: 20, ph: 'tablet, mg, ml…' },
+    { k: 'times_text', l: 'Times (24-hour, comma separated)', t: 'text', max: 100, ph: '08:00, 20:00', virtual: true },
+    { k: 'days', l: 'Days', t: 'checks', num: true, req: true, opts: DAYOPTS },
+    { k: 'notes', l: 'Notes', t: 'textarea', max: 500 },
+    { k: 'active', l: 'Active', t: 'bool' }],
+    defaults: () => ({ days: [0, 1, 2, 3, 4, 5, 6], active: true, times_text: '08:00' }),
+    fromRow: r => ({ ...r, times_text: (r.times || []).join(', ') }),
+    check: v => (parseTimes(v.times_text) === null ? 'Enter times like 08:00 or 08:00, 20:00.' : null),
+    toRow: v => ({ name: v.name, dose: v.dose, unit: v.unit, times: parseTimes(v.times_text) || [], days: v.days, notes: v.notes, active: v.active }) },
+  body_measurements: { title: 'body measurement', fields: [
+    { k: 'measure_date', l: 'Date', t: 'date', req: true },
+    { k: 'weight_kg', l: 'Weight', t: 'number', conv: 'weight', min: 20, max: 500 },
+    { k: 'body_fat_pct', l: 'Body fat (%)', t: 'number', min: 2, max: 80 },
+    { k: 'waist_cm', l: 'Waist', t: 'number', conv: 'length', min: 20, max: 300 },
+    { k: 'chest_cm', l: 'Chest', t: 'number', conv: 'length', min: 20, max: 300 },
+    { k: 'hips_cm', l: 'Hips', t: 'number', conv: 'length', min: 20, max: 300 },
+    { k: 'arm_cm', l: 'Arm', t: 'number', conv: 'length', min: 5, max: 100 },
+    { k: 'thigh_cm', l: 'Thigh', t: 'number', conv: 'length', min: 10, max: 150 },
+    { k: 'resting_hr', l: 'Resting heart rate (bpm)', t: 'number', min: 20, max: 250, int: true },
+    { k: 'systolic', l: 'Blood pressure — top number (optional)', t: 'number', min: 40, max: 300, int: true },
+    { k: 'diastolic', l: 'Blood pressure — bottom number (optional)', t: 'number', min: 20, max: 200, int: true },
+    { k: 'notes', l: 'Notes', t: 'text', max: 500 }],
+    defaults: () => ({ measure_date: S.date }),
+    check: v => (['weight_kg', 'body_fat_pct', 'waist_cm', 'chest_cm', 'hips_cm', 'arm_cm', 'thigh_cm', 'resting_hr', 'systolic', 'diastolic'].every(k => v[k] == null) ? 'Enter at least one measurement.' : (v.systolic != null) !== (v.diastolic != null) ? 'Enter both blood pressure numbers, or neither.' : null) },
+  habits: { title: 'habit', fields: [
+    { k: 'name', l: 'Habit', t: 'text', req: true, max: 80, ph: 'e.g. Read 20 minutes' },
+    { k: 'target_per_week', l: 'Target days per week', t: 'number', req: true, min: 1, max: 7, int: true },
+    { k: 'active', l: 'Active', t: 'bool' }], defaults: () => ({ target_per_week: 7, active: true }) },
+  reminders: { title: 'reminder', fields: [
+    { k: 'title', l: 'Reminder', t: 'text', req: true, max: 120 },
+    { k: 'category', l: 'Category', t: 'select', req: true, opts: opt(['workout', 'meal', 'water', 'supplement', 'sleep', 'wake', 'recovery', 'other']) },
+    { k: 'remind_time', l: 'Time', t: 'time', req: true },
+    { k: 'days', l: 'Repeat on', t: 'checks', num: true, req: true, opts: DAYOPTS },
+    { k: 'active', l: 'Active', t: 'bool' }],
+    defaults: () => ({ category: 'other', days: [0, 1, 2, 3, 4, 5, 6], active: true, remind_time: '09:00' }) }
+};
+Object.keys(ENT).forEach(k => { ENT[k].table = k; });
+const getFields = E => (typeof E.fields === 'function' ? E.fields() : E.fields);
+
+function openForm(key, row, preset = {}, parent = {}) {
+  const E = ENT[key], fields = getFields(E);
+  let vals = row ? (E.fromRow ? E.fromRow(row) : { ...row }) : { ...(E.defaults ? E.defaults() : {}), ...preset };
+  fields.forEach(f => { if (f.t === 'time' && vals[f.k]) vals[f.k] = T(vals[f.k]); });
+  const m = modal({
+    title: (row ? 'Edit ' : 'Add ') + E.title, wide: fields.length > 8,
+    body: `${E.extra ? E.extra() : ''}<div class="req-note">Fields marked <span class="req">*</span> are required.</div>${fields.map(f => fld(f, vals[f.k])).join('')}<div class="err" id="e__form" role="alert"></div>`,
+    onSubmit: async form => {
+      const { out, errs } = readForm(form, fields); showErrs(form, errs);
+      if (Object.keys(errs).length) return false;
+      const bad = E.check ? E.check(out) : null; if (bad) { form.querySelector('#e__form').textContent = bad; return false; }
+      let data = E.toRow ? E.toRow(out, row) : { ...out };
+      fields.filter(f => f.virtual && !E.toRow).forEach(f => delete data[f.k]);
+      if (row) await DB.update(E.table, row.id, data); else await DB.insert(E.table, { ...data, ...parent });
+      toast(row ? 'Changes saved.' : 'Added.', 'ok'); render();
+    }
+  });
+  if (E.afterOpen) E.afterOpen(m.form);
+}
+async function deleteRow(key, id) {
+  const E = ENT[key]; if (!(await confirmBox(`Delete this ${E.title}? This cannot be undone.`))) return;
+  await DB.remove(E.table, id); toast('Deleted.', 'ok'); render();
+}
+
+/* ---------- static content ---------- */
+const EX_LIB = { chest: ['Bench press', 'Incline dumbbell press', 'Push-up', 'Chest fly', 'Dips'], back: ['Pull-up', 'Lat pulldown', 'Barbell row', 'Dumbbell row', 'Deadlift'], shoulders: ['Overhead press', 'Lateral raise', 'Face pull', 'Arnold press'], arms: ['Barbell curl', 'Hammer curl', 'Triceps pushdown', 'Skull crusher'], legs: ['Squat', 'Leg press', 'Lunge', 'Romanian deadlift', 'Calf raise', 'Glute bridge'], core: ['Plank (seconds)', 'Crunch', 'Leg raise', 'Russian twist', 'Dead bug'], cardio: ['Treadmill run', 'Cycling', 'Rowing machine', 'Jump rope', 'Burpees'], 'full body': ['Kettlebell swing', 'Clean and press', 'Thruster', 'Mountain climber'] };
+const allExerciseNames = () => [...new Set([...Object.values(EX_LIB).flat(), ...rows('custom_exercises').map(c => c.name), ...rows('workout_exercises').map(x => x.exercise_name)])].sort();
+const WK_TPL = {
+  'Push / Pull / Legs': [[1, 'Push day', ['chest', 'shoulders', 'arms']], [2, 'Pull day', ['back', 'arms']], [3, 'Leg day', ['legs', 'core']], [5, 'Push day', ['chest', 'shoulders', 'arms']], [6, 'Pull day', ['back', 'arms']]],
+  'Full body (3 days)': [[1, 'Full body A', ['full body']], [3, 'Full body B', ['full body']], [5, 'Full body C', ['full body']]],
+  'Upper / Lower (4 days)': [[1, 'Upper body', ['chest', 'back', 'shoulders', 'arms']], [2, 'Lower body', ['legs', 'core']], [4, 'Upper body', ['chest', 'back', 'shoulders', 'arms']], [5, 'Lower body', ['legs', 'core']]]
+};
+const HOME_ROUTINES = [
+  { n: 'Bodyweight Starter', lvl: 'Beginner', min: 15, needs: [], ex: [['Push-up', 3, 8, 45], ['Bodyweight squat', 3, 15, 45], ['Plank (seconds)', 3, 30, 30], ['Glute bridge', 3, 12, 30]] },
+  { n: 'Bodyweight Circuit', lvl: 'Intermediate', min: 30, needs: [], ex: [['Push-up', 4, 15, 40], ['Jump squat', 4, 15, 40], ['Lunge', 3, 12, 40], ['Mountain climber', 3, 30, 30], ['Plank (seconds)', 3, 45, 30]] },
+  { n: 'Dumbbell Full Body', lvl: 'Intermediate', min: 30, needs: ['dumbbell'], ex: [['Goblet squat', 4, 10, 60], ['Dumbbell row', 4, 10, 60], ['Dumbbell press', 3, 10, 60], ['Romanian deadlift', 3, 10, 60], ['Bicep curl', 2, 12, 45]] },
+  { n: 'Resistance Band Strength', lvl: 'Beginner', min: 30, needs: ['band'], ex: [['Band row', 3, 12, 45], ['Band chest press', 3, 12, 45], ['Band squat', 3, 15, 45], ['Band pull-apart', 3, 15, 30]] },
+  { n: 'Kettlebell + Core', lvl: 'Intermediate', min: 45, needs: ['kettlebell'], ex: [['Kettlebell swing', 5, 15, 45], ['Goblet squat', 4, 10, 60], ['Kettlebell press', 3, 8, 60], ['Russian twist', 3, 20, 30], ['Plank (seconds)', 3, 45, 30]] },
+  { n: 'Pull-up & Push Day', lvl: 'Advanced', min: 45, needs: ['pull-up'], ex: [['Pull-up', 5, 6, 90], ['Push-up', 5, 15, 60], ['Chin-up', 3, 6, 90], ['Pike push-up', 3, 10, 60], ['Leg raise', 3, 12, 45]] },
+  { n: 'Jump-Rope HIIT', lvl: 'Intermediate', min: 15, needs: ['jump rope'], ex: [['Jump rope', 8, 40, 20], ['Burpees', 4, 10, 30]] },
+  { n: 'Mat Stretch & Mobility', lvl: 'Beginner', min: 15, needs: ['mat'], ex: [['Cat-cow', 2, 10, 15], ['Child pose (seconds)', 2, 30, 15], ['Hip flexor stretch (seconds)', 2, 30, 15], ['Hamstring stretch (seconds)', 2, 30, 15]] }
+];
+const PLAN_TPL = {
+  'Weekday': { days: [1, 2, 3, 4, 5], items: [['06:30', 'Wake up', 'wake'], ['06:40', 'Morning stretch', 'recovery'], ['07:15', 'Breakfast', 'meal'], ['12:30', 'Lunch', 'meal'], ['17:30', 'Workout', 'workout'], ['19:30', 'Dinner', 'meal'], ['21:30', 'Wind-down', 'sleep'], ['22:30', 'Bedtime', 'sleep']] },
+  'Weekend': { days: [0, 6], items: [['07:30', 'Wake up', 'wake'], ['08:15', 'Breakfast', 'meal'], ['10:00', 'Workout', 'workout'], ['13:00', 'Lunch', 'meal'], ['19:30', 'Dinner', 'meal'], ['22:30', 'Bedtime', 'sleep']] },
+  'Rest day': { days: [0], items: [['07:30', 'Wake up', 'wake'], ['08:00', 'Breakfast', 'meal'], ['11:00', 'Massage / foam rolling', 'recovery'], ['13:00', 'Lunch', 'meal'], ['16:00', 'Light walk or stretching', 'recovery'], ['19:30', 'Dinner', 'meal'], ['22:30', 'Bedtime', 'sleep']] }
+};
+const IDEAS = [
+  ['Oats with banana, nuts and seeds', 'breakfast', ['maintain', 'energy', 'gain', 'lose'], 'vegan'], ['Greek yogurt with berries and honey', 'breakfast', ['maintain', 'lose', 'gain'], 'veg'], ['Veggie omelette with whole-grain toast', 'breakfast', ['lose', 'maintain', 'gain'], 'veg'], ['Tofu scramble with spinach', 'breakfast', ['lose', 'maintain'], 'vegan'], ['Peanut butter banana smoothie with milk or soy milk', 'breakfast', ['gain', 'energy'], 'veg'], ['Eggs, avocado and whole-grain toast', 'breakfast', ['gain', 'maintain', 'energy'], 'veg'],
+  ['Grilled chicken, rice and steamed vegetables', 'lunch', ['gain', 'maintain', 'lose'], 'any'], ['Lentil soup with a side salad', 'lunch', ['lose', 'maintain', 'energy'], 'vegan'], ['Chickpea and quinoa bowl with tahini', 'lunch', ['maintain', 'gain', 'energy'], 'vegan'], ['Tuna or egg salad wrap with greens', 'lunch', ['lose', 'maintain'], 'any'], ['Paneer or tofu stir-fry with brown rice', 'lunch', ['gain', 'maintain'], 'veg'], ['Bean burrito bowl with salsa', 'lunch', ['maintain', 'gain', 'energy'], 'vegan'],
+  ['Baked salmon, sweet potato and broccoli', 'dinner', ['gain', 'maintain', 'lose'], 'any'], ['Vegetable and bean chili', 'dinner', ['lose', 'maintain'], 'vegan'], ['Chicken or tofu curry with rice', 'dinner', ['gain', 'maintain', 'energy'], 'any'], ['Whole-wheat pasta with lentil tomato sauce', 'dinner', ['energy', 'gain', 'maintain'], 'vegan'], ['Stir-fried vegetables with egg and noodles', 'dinner', ['maintain', 'lose'], 'veg'], ['Grilled fish with salad and potatoes', 'dinner', ['lose', 'maintain'], 'any'],
+  ['Apple with peanut butter', 'snack', ['energy', 'gain', 'maintain'], 'vegan'], ['Handful of mixed nuts and fruit', 'snack', ['energy', 'gain', 'maintain'], 'vegan'], ['Cottage cheese or yogurt with fruit', 'snack', ['lose', 'maintain', 'gain'], 'veg'], ['Hummus with carrot and cucumber sticks', 'snack', ['lose', 'maintain'], 'vegan'], ['Boiled eggs', 'snack', ['lose', 'gain', 'maintain'], 'veg'], ['Banana and a glass of milk or soy milk', 'snack', ['gain', 'energy'], 'veg']
+];
+const SORE_TIPS = { 'neck': 'Gentle neck tilts and shoulder rolls, and check your screen height.', 'shoulders': 'Light arm circles, doorway chest stretch, and an easy-day for pressing movements.', 'upper back': 'Cat-cow, thoracic rotations and a foam roller on the upper back.', 'lower back': 'Gentle hip mobility, child pose and short walks. Avoid heavy hinging until it settles.', 'chest': 'Doorway chest stretch and easy push-up variations.', 'arms': 'Light stretching and easy movement to keep blood flowing.', 'core': 'Gentle breathing work and easy walks.', 'hips': 'Hip flexor stretch, pigeon pose and glute bridges.', 'quads': 'Foam roll the front of the thigh and do an easy quad stretch.', 'hamstrings': 'Easy hamstring stretches and a light walk.', 'calves': 'Calf stretch against a wall and gentle foam rolling.', 'feet': 'Roll the sole of the foot over a ball and wear comfortable shoes.' };
+const NAV = [['dashboard', 'Dashboard', '📊'], ['plan', "Today's Plan", '✅'], ['workouts', 'Workouts', '🏋️'], ['homegym', 'Home Gym', '🏠'], ['nutrition', 'Nutrition', '🥗'], ['water', 'Water', '💧'], ['sleep', 'Sleep', '😴'], ['recovery', 'Recovery & Massage', '💆'], ['supps', 'Supplements', '💊'], ['body', 'Body Tracking', '📏'], ['habits', 'Habits', '🔥'], ['reminders', 'Reminders', '⏰'], ['reports', 'Reports', '📈'], ['settings', 'Settings', '⚙️']];
+const BOTTOM = ['dashboard', 'plan', 'workouts', 'nutrition'];
+const DISCLAIMER = 'DailyWell is a tracker and reminder tool. It is not a medical device and does not give medical advice. Talk to a qualified healthcare professional about your health, diet, exercise and medicines.';
+
+/* ---------- derived data ---------- */
+const cmpTime = (a, b) => T(a.item_time || a.time).localeCompare(T(b.item_time || b.time));
+const mealTotals = d => {
+  const m = rows('meals').filter(x => x.meal_date === d), f = k => m.filter(x => x[k] != null);
+  return { n: m.length, cal: sum(f('calories'), x => x.calories), p: sum(f('protein_g'), x => x.protein_g), c: sum(f('carbs_g'), x => x.carbs_g), f: sum(f('fat_g'), x => x.fat_g), nCal: f('calories').length, nP: f('protein_g').length };
+};
+const waterOn = d => sum(rows('water_logs').filter(x => x.log_date === d), x => x.amount_ml);
+const sleepDur = r => Math.round((new Date(r.wake_at) - new Date(r.bed_at)) / 60000);
+const sleepMinOn = d => sum(rows('sleep_logs').filter(s => !s.is_nap && s.sleep_date === d), sleepDur);
+const sleepTargetMin = () => { const m = (mins(S.set.wake_time) - mins(S.set.bed_time) + 1440) % 1440; return m || 480; };
+const hasHabit = (id, d) => rows('habit_logs').some(l => l.habit_id === id && l.log_date === d);
+const suppStatus = (id, d) => (rows('supplement_logs').find(l => l.supplement_id === id && l.log_date === d) || {}).status;
+function streak(pred, start = today()) { let d = start, n = 0; if (!pred(d)) d = addDays(d, -1); while (n < 1000 && pred(d)) { n++; d = addDays(d, -1); } return n; }
+function workoutWeekStreak() {
+  const g = S.set.workouts_per_week_goal || 1, cnt = ws => rows('workouts').filter(w => w.status === 'done' && w.workout_date >= ws && w.workout_date <= addDays(ws, 6)).length;
+  let ws = weekStart(today()), n = 0; if (cnt(ws) >= g) n++; ws = addDays(ws, -7);
+  while (n < 500 && cnt(ws) >= g) { n++; ws = addDays(ws, -7); } return n;
+}
+function checklist(d) {
+  const D = dow(d), items = [];
+  rows('routine_items').filter(i => i.active && (i.days || []).includes(D)).sort(cmpTime).forEach(i => { const l = rows('routine_log').find(x => x.item_id === i.id && x.log_date === d); items.push({ kind: 'plan', id: i.id, label: i.title, time: T(i.item_time), done: l && l.status === 'done' }); });
+  rows('workouts').filter(w => w.workout_date === d && w.status !== 'skipped').forEach(w => items.push({ kind: 'workout', id: w.id, label: 'Workout: ' + w.title, time: T(w.start_time), done: w.status === 'done' }));
+  rows('supplements').filter(s => s.active && (s.days || []).includes(D)).forEach(s => items.push({ kind: 'supp', id: s.id, label: s.name + (s.dose != null ? ` ${s.dose}${s.unit ? ' ' + s.unit : ''}` : ''), time: T((s.times || [])[0]), done: suppStatus(s.id, d) === 'taken' }));
+  rows('habits').filter(h => h.active).forEach(h => items.push({ kind: 'habit', id: h.id, label: h.name, done: hasHabit(h.id, d) }));
+  if (S.set.water_goal_ml > 0) items.push({ kind: 'water', label: `Water goal (${dispN('volume', S.set.water_goal_ml, 0)})`, done: waterOn(d) >= S.set.water_goal_ml });
+  return items;
+}
+async function setLog(table, pk, pid, d, status) {
+  const ex = rows(table).find(x => x[pk] === pid && x.log_date === d);
+  if (!status) { if (ex) await DB.remove(table, ex.id); } else if (ex) { if (ex.status !== status) await DB.update(table, ex.id, { status }); } else await DB.insert(table, { [pk]: pid, log_date: d, status });
+}
+async function toggleHabit(id, d) { const ex = rows('habit_logs').find(l => l.habit_id === id && l.log_date === d); if (ex) await DB.remove('habit_logs', ex.id); else await DB.insert('habit_logs', { habit_id: id, log_date: d }); }
+async function toggleItem(kind, id, d) {
+  const cur = checklist(d).find(x => x.kind === kind && x.id === id), done = cur && cur.done;
+  if (kind === 'plan') await setLog('routine_log', 'item_id', id, d, done ? null : 'done');
+  else if (kind === 'workout') await DB.update('workouts', id, { status: done ? 'planned' : 'done' });
+  else if (kind === 'supp') await setLog('supplement_logs', 'supplement_id', id, d, done ? null : 'taken');
+  else if (kind === 'habit') await toggleHabit(id, d);
+}
+const calFloor = () => (S.set.sex === 'female' ? 1200 : 1500);
+
+/* ---------- reminders ---------- */
+function todayReminders(d = today()) {
+  const out = [], D = dow(d);
+  rows('reminders').filter(r => r.active && (r.days || []).includes(D)).forEach(r => out.push({ key: 'r:' + r.id, time: T(r.remind_time), title: r.title, cat: r.category }));
+  if (S.set.auto_reminders) {
+    rows('routine_items').filter(i => i.active && (i.days || []).includes(D)).forEach(i => out.push({ key: 'p:' + i.id, time: T(i.item_time), title: i.title, cat: i.category }));
+    rows('supplements').filter(s => s.active && (s.days || []).includes(D)).forEach(s => (s.times || []).forEach(t => out.push({ key: 's:' + s.id + ':' + t, sid: s.id, time: T(t), title: 'Take ' + s.name, cat: 'supplement' })));
+    rows('workouts').filter(w => w.workout_date === d && w.status === 'planned' && w.start_time).forEach(w => out.push({ key: 'w:' + w.id, time: T(w.start_time), title: 'Workout: ' + w.title, cat: 'workout' }));
+    const bed = mins(S.set.bed_time), wake = mins(S.set.wake_time), wd = S.set.wind_down_min || 0;
+    out.push({ key: 'wake', time: hmFrom(wake), title: 'Time to wake up', cat: 'wake' });
+    if (wd > 0) out.push({ key: 'wind', time: hmFrom(bed - wd), title: `Start winding down — bedtime is ${fmtT(S.set.bed_time)}`, cat: 'sleep' });
+    out.push({ key: 'bed', time: hmFrom(bed), title: 'Bedtime', cat: 'sleep' });
+    const h = Number(S.set.water_reminder_hours) || 0;
+    if (h > 0) { const end = bed > wake ? bed : 1439; for (let t = wake + h * 60, i = 0; t < end && i < 30; t += h * 60, i++) out.push({ key: 'water:' + Math.round(t), time: hmFrom(t), title: 'Drink some water', cat: 'water' }); }
+  }
+  return out.filter(x => x.time).sort((a, b) => a.time.localeCompare(b.time));
+}
+const nextReminder = () => { const n = nowHM(); return todayReminders().find(r => r.time > n) || null; };
+function inQuiet(h) { const a = T(S.set.quiet_start), b = T(S.set.quiet_end); if (!a || !b || a === b) return false; return a < b ? h >= a && h < b : h >= a || h < b; }
+function fire(r, d) {
+  S.banners.push({ id: d + '|' + r.key, rk: r.key, sid: r.sid, time: r.time, title: r.title }); renderBanners();
+  if (S.set.browser_notifications && 'Notification' in window && Notification.permission === 'granted') { try { new Notification('DailyWell', { body: `${fmtT(r.time)} · ${r.title}`, tag: d + r.key }); } catch (e) { /* ignore */ } }
+}
+function tick() {
+  if (!S.started) return;
+  const d = today(), h = nowHM(), nm = mins(h), list = todayReminders(d);
+  Object.keys(S.snooze).forEach(id => { if (Date.now() >= S.snooze[id].at) { const r = S.snooze[id]; delete S.snooze[id]; if (!inQuiet(h)) fire(r.r, d); } });
+  list.forEach(r => {
+    const id = d + '|' + r.key, diff = nm - mins(r.time);
+    if (diff >= 0 && diff <= 2 && !S.fired.has(id)) { S.fired.add(id); if (!inQuiet(h)) fire(r, d); }
+  });
+}
+function startEngine() { stopEngine(); S.eng = setInterval(tick, 15000); setTimeout(tick, 500); }
+function stopEngine() { clearInterval(S.eng); S.banners = []; }
+function renderBanners() {
+  const el = $('#banners'); if (!el) return;
+  el.innerHTML = S.banners.map((b, i) => `<div class="banner" role="alert"><span aria-hidden="true">⏰</span><div class="grow"><strong>${esc(fmtT(b.time))}</strong> ${esc(b.title)}</div><button class="btn sm" data-act="rem-done" data-i="${i}">Done</button><button class="btn sm" data-act="rem-snooze" data-i="${i}">Snooze 10 min</button><button class="btn sm ghost" data-act="rem-dismiss" data-i="${i}" aria-label="Dismiss">✕</button></div>`).join('');
+}
+
+/* ---------- insights (only from real logged data) ---------- */
+function insights() {
+  const out = [], d = today(), last7 = dateRange(addDays(d, -6), d);
+  const sl = last7.map(sleepMinOn).filter(m => m > 0);
+  if (sl.length >= 3) { const a = avg(sl), t = sleepTargetMin(), diff = a - t; out.push(`You slept ${(a / 60).toFixed(1)} hours on average over ${sl.length} logged nights this week — ${Math.abs(diff) < 6 ? 'right on' : (Math.abs(diff) / 60).toFixed(1) + ' hours ' + (diff < 0 ? 'below' : 'above')} your ${(t / 60).toFixed(1)}-hour target.`); }
+  const ws = weekStart(d), wk = rows('workouts').filter(w => w.workout_date >= ws && w.workout_date <= addDays(ws, 6) && w.status !== 'skipped');
+  if (wk.length) out.push(`You completed ${wk.filter(w => w.status === 'done').length} of ${wk.length} scheduled workouts this week${S.set.workouts_per_week_goal ? ` (weekly goal: ${S.set.workouts_per_week_goal})` : ''}.`);
+  if (rows('water_logs').some(w => w.log_date >= last7[0]) && S.set.water_goal_ml) out.push(`You reached your water goal on ${last7.filter(x => waterOn(x) >= S.set.water_goal_ml).length} of the last 7 days.`);
+  const cd = last7.map(mealTotals).filter(m => m.nCal > 0);
+  if (cd.length) out.push(`On the ${cd.length} day${cd.length > 1 ? 's' : ''} with logged calories this week you averaged ${num(avg(cd, m => m.cal))} kcal${S.set.calorie_target ? ` (target ${num(S.set.calorie_target)})` : ''}.`);
+  const hb = rows('habits').filter(h => h.active);
+  if (hb.length) { const tot = hb.length * 7, done = sum(hb, h => last7.filter(x => hasHabit(h.id, x)).length); out.push(`You completed ${done} of ${tot} possible habit check-ins in the last 7 days (${Math.round(done / tot * 100)}%).`); }
+  const bw = rows('body_measurements').filter(m => m.weight_kg != null && m.measure_date >= addDays(d, -30)).sort((a, b) => a.measure_date.localeCompare(b.measure_date));
+  if (bw.length >= 2) { const df = toD('weight', bw[bw.length - 1].weight_kg - bw[0].weight_kg); out.push(`Between ${fmtShort(bw[0].measure_date)} and ${fmtShort(bw[bw.length - 1].measure_date)} your recorded weight changed by ${df > 0 ? '+' : ''}${df.toFixed(1)} ${CONV.weight.u()}.`); }
+  const ci = rows('daily_checkins').filter(c => c.checkin_date >= last7[0]);
+  if (ci.length >= 3) { const m = avg(ci.filter(c => c.mood != null), c => c.mood), e = avg(ci.filter(c => c.energy != null), c => c.energy); out.push(`Your average mood this week is ${m ? m.toFixed(1) : '—'}/5 and energy ${e ? e.toFixed(1) : '—'}/5 across ${ci.length} check-ins.`); }
+  if (S.set.calorie_target && S.set.calorie_target < calFloor()) out.push(`Your daily calorie target (${num(S.set.calorie_target)} kcal) is below commonly used minimums. Please talk to a doctor or registered dietitian before eating this little.`);
+  return out;
+}
+
+/* ---------- small UI pieces ---------- */
+const card = (title, body, cls = '') => `<section class="card ${cls}">${title ? `<h2>${title}</h2>` : ''}${body}</section>`;
+const empty = (icon, msg, btn = '') => `<div class="empty"><div aria-hidden="true">${icon}</div><p>${msg}</p>${btn}</div>`;
+const bar = (pct, cls = '') => `<div class="bar ${cls}" role="progressbar" aria-valuenow="${Math.round(clamp(pct, 0, 100))}" aria-valuemin="0" aria-valuemax="100"><span style="width:${clamp(pct, 0, 100)}%"></span></div>`;
+const addBtn = (ent, label, preset, parent) => `<button class="btn primary" data-act="add" data-ent="${ent}"${preset ? ` data-preset='${esc(JSON.stringify(preset))}'` : ''}${parent ? ` data-parent='${esc(JSON.stringify(parent))}'` : ''}>＋ ${esc(label)}</button>`;
+const rowBtns = (ent, id) => `<button class="btn sm ghost" data-act="edit" data-ent="${ent}" data-id="${id}">Edit</button><button class="btn sm ghost danger-t" data-act="del" data-ent="${ent}" data-id="${id}">Delete</button>`;
+const dateNav = () => `<div class="datenav"><button class="btn sm" data-act="dprev" aria-label="Previous day">‹</button><input type="date" id="datePick" value="${S.date}" aria-label="Choose date"><button class="btn sm" data-act="dnext" aria-label="Next day">›</button><button class="btn sm ghost" data-act="dtoday">Today</button></div>`;
+const tabsBar = (page, list) => { const cur = S.tab[page] || list[0][0]; return `<div class="tabs" role="group" aria-label="Sections">${list.map(([k, l]) => `<button class="btn sm" data-act="tab" data-tab="${k}" aria-pressed="${cur === k}">${l}</button>`).join('')}</div>`; };
+const curTab = (page, def) => S.tab[page] || def;
+const pct = (v, t) => (t > 0 ? (v / t) * 100 : 0);
+const statCard = (k, v, s, b = '') => `<div class="card stat"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s || ''}</div>${b}</div>`;
+const disclaimer = `<p class="small muted">${esc(DISCLAIMER)}</p>`;
+const PAL = ['#0f6e7a', '#15803d', '#d97706', '#7c3aed', '#dc2626', '#0284c7', '#db2777'];
+function mkChart(id, cfg) {
+  const el = $('#' + id); if (!el) return;
+  if (!window.Chart) { el.replaceWith(Object.assign(document.createElement('p'), { className: 'muted', textContent: 'Charts are unavailable because the chart library could not load.' })); return; }
+  if (S.charts[id]) { try { S.charts[id].destroy(); } catch (e) { /* ignore */ } }
+  Chart.defaults.color = cssv('--muted') || '#5a6b7b'; Chart.defaults.borderColor = cssv('--border') || '#dbe3ea';
+  cfg.options = Object.assign({ responsive: true, maintainAspectRatio: false }, cfg.options || {});
+  S.charts[id] = new Chart(el, cfg);
+}
+const chartBox = (id, label) => `<div class="chartbox"><canvas id="${id}" role="img" aria-label="${esc(label)}"></canvas></div>`;
+
+/* ---------- pages ---------- */
+const PAGES = {};
+
+PAGES.dashboard = () => {
+  const d = today(), cl = checklist(d), done = cl.filter(x => x.done).length, score = cl.length ? Math.round(done / cl.length * 100) : null;
+  const tw = rows('workouts').filter(w => w.workout_date === d), m = mealTotals(d), water = waterOn(d), gw = S.set.water_goal_ml;
+  const ls = rows('sleep_logs').filter(s => !s.is_nap).sort((a, b) => a.wake_at.localeCompare(b.wake_at)).pop(), nxt = nextReminder();
+  const ins = insights().slice(0, 3);
+  const mac = (l, v, t, n) => `<div class="small"><strong>${l}</strong> ${n ? num(v) + ' g' : 'not entered'}${t ? ` / ${num(t)} g` : ''}</div>`;
+  const wout = !tw.length ? 'Rest day / none planned' : tw.map(w => `${esc(w.title)} <span class="badge st-${w.status}">${w.status}</span>`).join('<br>');
+  const quick = S.set.units_volume === 'oz' ? [[4, 118], [8, 237], [16, 473]] : [[150, 150], [250, 250], [500, 500]];
+  S.after.push(() => {
+    const days = dateRange(addDays(d, -6), d);
+    mkChart('chWeek', { type: 'bar', data: { labels: days.map(fmtShort), datasets: [
+      { label: 'Water % of goal', data: days.map(x => gw ? Math.round(waterOn(x) / gw * 100) : 0), backgroundColor: PAL[5] },
+      { label: 'Calories % of target', data: days.map(x => { const t = mealTotals(x); return S.set.calorie_target && t.nCal ? Math.round(t.cal / S.set.calorie_target * 100) : 0; }), backgroundColor: PAL[2] },
+      { label: 'Sleep % of target', data: days.map(x => Math.round(sleepMinOn(x) / sleepTargetMin() * 100)), backgroundColor: PAL[3] }] }, options: { scales: { y: { beginAtZero: true, suggestedMax: 120 } } } });
+    const w = rows('body_measurements').filter(x => x.weight_kg != null && x.measure_date >= addDays(d, -90)).sort((a, b) => a.measure_date.localeCompare(b.measure_date));
+    if (w.length) mkChart('chWt', { type: 'line', data: { labels: w.map(x => fmtShort(x.measure_date)), datasets: [{ label: `Weight (${CONV.weight.u()})`, data: w.map(x => Math.round(toD('weight', x.weight_kg) * 10) / 10), borderColor: PAL[0], tension: .25 }] } });
+  });
+  const wRows = rows('body_measurements').filter(x => x.weight_kg != null && x.measure_date >= addDays(d, -90));
+  return `<div class="top"><h1>Today · ${esc(fmtDate(d))}</h1><div class="btns"><button class="btn sm" data-act="water-add" data-ml="${quick[1][1]}">＋ ${quick[1][0]} ${CONV.volume.u()} water</button></div></div>
+  ${rows('routine_items').length + rows('workouts').length + rows('meals').length === 0 ? `<div class="notice">Welcome! Start by setting up your <a href="#" data-act="nav" data-page="plan">daily plan</a>, or load <a href="#" data-act="sample-load">sample data</a> to explore (you can clear it any time in Settings).</div>` : ''}
+  <div class="grid">
+   <div class="card stat"><div class="k">Today's score</div><div class="ring" style="--p:${score || 0}"><div>${score == null ? '—' : score + '%'}</div></div><div class="s center">${score == null ? 'Nothing planned yet' : `${done} of ${cl.length} items done`}</div></div>
+   ${statCard('Today\'s workout', `<span style="font-size:1.1rem">${wout}</span>`, `Week: ${rows('workouts').filter(w => w.status === 'done' && w.workout_date >= weekStart(d) && w.workout_date <= addDays(weekStart(d), 6)).length}/${S.set.workouts_per_week_goal || 0} done`)}
+   ${statCard('Calories', m.nCal ? num(m.cal) + ' kcal' : (m.n ? 'not entered' : '0 kcal'), S.set.calorie_target ? `Target ${num(S.set.calorie_target)} kcal` : 'No target set', m.nCal && S.set.calorie_target ? bar(pct(m.cal, S.set.calorie_target), m.cal > S.set.calorie_target * 1.1 ? 'warn' : '') : '')}
+   ${statCard('Water', dispN('volume', water, 0), gw ? `Goal ${dispN('volume', gw, 0)}` : '', gw ? bar(pct(water, gw), water >= gw ? 'ok' : '') : '')}
+   ${statCard('Last sleep', ls ? fmtDur(sleepDur(ls)) : '—', ls ? `Woke ${fmtShort(ls.sleep_date)}${ls.quality ? ' · quality ' + ls.quality + '/5' : ''}` : 'No sleep logged yet')}
+   ${statCard('Tonight / tomorrow', `Bed ${fmtT(S.set.bed_time)}`, `Wake up ${fmtT(S.set.wake_time)} · target ${(sleepTargetMin() / 60).toFixed(1)} h`)}
+   ${statCard('Next reminder', nxt ? esc(fmtT(nxt.time)) : '—', nxt ? esc(nxt.title) : 'No more reminders today')}
+  </div>
+  <div class="grid two">
+   ${card('Macros today', `${mac('Protein', m.p, S.set.protein_target, m.nP)}${bar(pct(m.p, S.set.protein_target))}${mac('Carbs', m.c, S.set.carbs_target, rows('meals').some(x => x.meal_date === d && x.carbs_g != null))}${bar(pct(m.c, S.set.carbs_target))}${mac('Fat', m.f, S.set.fat_target, rows('meals').some(x => x.meal_date === d && x.fat_g != null))}${bar(pct(m.f, S.set.fat_target))}`)}
+   ${card('Streaks', `<div class="grid"><div><div class="v" style="font-size:1.5rem;font-weight:700">${workoutWeekStreak()}</div><div class="small muted">weeks meeting workout goal</div></div><div><div class="v" style="font-size:1.5rem;font-weight:700">${gw ? streak(x => waterOn(x) >= gw) : 0}</div><div class="small muted">days hitting water goal</div></div><div><div class="v" style="font-size:1.5rem;font-weight:700">${streak(x => sleepMinOn(x) > 0 && sleepMinOn(x) >= sleepTargetMin() - 30)}</div><div class="small muted">nights near sleep target</div></div><div><div class="v" style="font-size:1.5rem;font-weight:700">${rows('habits').some(h => h.active) ? streak(x => rows('habits').filter(h => h.active).every(h => hasHabit(h.id, x))) : 0}</div><div class="small muted">days all habits done</div></div></div>`)}
+  </div>
+  ${card("Today's checklist", cl.length ? `<ul class="clean">${cl.map(x => `<li class="row ${x.done ? 'done' : ''}"><div class="t">${x.time ? esc(fmtT(x.time)) : ''}</div><div class="grow"><strong>${esc(x.label)}</strong></div>${x.kind === 'water' ? `<span class="badge ${x.done ? 'st-done' : ''}">${x.done ? 'reached' : 'in progress'}</span>` : `<button class="btn sm ${x.done ? 'primary' : ''}" data-act="tgl" data-kind="${x.kind}" data-id="${x.id}" aria-pressed="${!!x.done}">${x.done ? '✓ Done' : 'Mark done'}</button>`}</li>`).join('')}</ul>` : empty('📝', 'Nothing scheduled for today.', `<button class="btn primary" data-act="nav" data-page="plan">Set up my plan</button>`))}
+  <div class="grid two">${card('Last 7 days vs. goals', chartBox('chWeek', 'Last 7 days: water, calories and sleep as a percent of goal'))}${card('Weight trend (90 days)', wRows.length ? chartBox('chWt', 'Weight over the last 90 days') : empty('📏', 'No weight entries yet.', `<button class="btn" data-act="nav" data-page="body">Add measurement</button>`))}</div>
+  ${ins.length ? card('Insights', `<ul>${ins.map(i => `<li>${esc(i)}</li>`).join('')}</ul><p class="small muted">Based only on what you have logged. Not medical advice.</p>`) : ''}`;
+};
+
+PAGES.plan = () => {
+  const d = S.date, D = dow(d), items = rows('routine_items').filter(i => i.active && (i.days || []).includes(D)).sort(cmpTime);
+  const list = items.map(i => {
+    const l = rows('routine_log').find(x => x.item_id === i.id && x.log_date === d), st = l && l.status;
+    return `<li class="row ${st === 'done' ? 'done' : ''}"><div class="t">${esc(fmtT(i.item_time))}</div><div class="grow"><strong>${esc(i.title)}</strong> <span class="badge">${esc(i.category)}</span>${st ? ` <span class="badge st-${st}">${st}</span>` : ''}</div><div class="btns"><button class="btn sm ${st === 'done' ? 'primary' : ''}" data-act="plan-set" data-id="${i.id}" data-st="${st === 'done' ? '' : 'done'}">${st === 'done' ? 'Undo' : 'Done'}</button><button class="btn sm" data-act="plan-set" data-id="${i.id}" data-st="${st === 'skipped' ? '' : 'skipped'}">${st === 'skipped' ? 'Undo skip' : 'Skip'}</button><button class="btn sm" data-act="plan-set" data-id="${i.id}" data-st="${st === 'postponed' ? '' : 'postponed'}">${st === 'postponed' ? 'Undo' : 'Later'}</button></div></li>`;
+  }).join('');
+  const all = rows('routine_items').slice().sort(cmpTime);
+  return `<div class="top"><h1>Today's Plan</h1><div class="btns">${addBtn('routine_items', 'Add item')}<button class="btn" data-act="plan-tpl">Use a template</button><button class="btn" data-act="plan-copy">Copy yesterday's plan</button></div></div>${dateNav()}
+  ${card(esc(fmtDate(d)), items.length ? `<ul class="clean">${list}</ul>` : empty('🗓️', 'No routine items for this day yet.', `<button class="btn primary" data-act="plan-tpl">Start from a template</button>`))}
+  ${card('All routine items', all.length ? `<ul class="clean">${all.map(i => `<li class="row"><div class="t">${esc(fmtT(i.item_time))}</div><div class="grow"><strong>${esc(i.title)}</strong>${i.active ? '' : ' <span class="badge bad">paused</span>'}<div class="small muted">${(i.days || []).slice().sort().map(x => WD[x]).join(' · ')}</div></div><div class="btns">${rowBtns('routine_items', i.id)}</div></li>`).join('')}</ul>` : '<p class="muted">Nothing here yet.</p>')}`;
+};
+
+PAGES.workouts = () => {
+  const f = S.f.workouts || (S.f.workouts = { q: '', status: '', loc: '', sort: 'desc' }), d = today();
+  let list = rows('workouts').filter(w => (!f.q || (w.title + ' ' + (w.notes || '') + ' ' + (w.muscle_groups || []).join(' ') + ' ' + w.type).toLowerCase().includes(f.q.toLowerCase())) && (!f.status || w.status === f.status) && (!f.loc || w.location === f.loc));
+  list.sort((a, b) => (f.sort === 'asc' ? 1 : -1) * (a.workout_date + T(a.start_time)).localeCompare(b.workout_date + T(b.start_time)));
+  const ws = weekStart(d), wkDone = rows('workouts').filter(w => w.status === 'done' && w.workout_date >= ws && w.workout_date <= addDays(ws, 6)).length;
+  const pr = {};
+  rows('workout_exercises').forEach(x => { const w = rows('workouts').find(y => y.id === x.workout_id); if (!w || w.status !== 'done') return; const p = pr[x.exercise_name] || (pr[x.exercise_name] = { w: null, r: 0 }); if (x.weight_kg != null && (p.w == null || x.weight_kg > p.w)) p.w = x.weight_kg; if (x.reps > p.r) p.r = x.reps; });
+  const prList = Object.entries(pr).sort((a, b) => (b[1].w || 0) - (a[1].w || 0)).slice(0, 10);
+  const cards = list.map(w => {
+    const ex = rows('workout_exercises').filter(x => x.workout_id === w.id);
+    return `<article class="card item"><div class="ih"><div><h3>${esc(w.title)}</h3><div class="meta">${esc(fmtDate(w.workout_date))}${w.start_time ? ' · ' + esc(fmtT(w.start_time)) : ''}${w.duration_min ? ' · ' + w.duration_min + ' min' : ''} · ${esc(w.location)} · ${esc(w.type)}${w.effort ? ' · effort ' + w.effort + '/10' : ''}</div></div><span class="badge st-${w.status}">${w.status}</span></div>
+    <div>${(w.muscle_groups || []).map(m => `<span class="tag">${esc(m)}</span>`).join('')}</div>
+    ${ex.length ? `<ul class="exl">${ex.map(x => `<li><span>${esc(x.exercise_name)} — ${x.sets} × ${x.reps}${x.weight_kg != null ? ' @ ' + dispN('weight', x.weight_kg) : ''}${x.rest_sec ? ' · rest ' + x.rest_sec + 's' : ''}</span><span class="btns">${rowBtns('workout_exercises', x.id)}</span></li>`).join('')}</ul>` : '<p class="muted small">No exercises logged yet.</p>'}
+    ${w.notes ? `<p class="note">${esc(w.notes)}</p>` : ''}
+    <div class="btns">${w.status !== 'done' ? `<button class="btn sm primary" data-act="wk-status" data-id="${w.id}" data-st="done">Mark done</button>` : `<button class="btn sm" data-act="wk-status" data-id="${w.id}" data-st="planned">Undo done</button>`}${w.status === 'planned' ? `<button class="btn sm" data-act="wk-status" data-id="${w.id}" data-st="skipped">Skip</button>` : ''}${addBtn('workout_exercises', 'Exercise', null, { workout_id: w.id }).replace('btn primary', 'btn sm')}${rowBtns('workouts', w.id)}</div></article>`;
+  }).join('');
+  const custom = rows('custom_exercises');
+  return `<div class="top"><h1>Workouts</h1><div class="btns">${addBtn('workouts', 'New workout')}<button class="btn" data-act="wk-tpl">Weekly plan template</button></div></div>
+  <div class="grid">${statCard('This week', `${wkDone} / ${S.set.workouts_per_week_goal || 0}`, 'workouts completed vs. goal', bar(pct(wkDone, S.set.workouts_per_week_goal), wkDone >= S.set.workouts_per_week_goal ? 'ok' : ''))}${statCard('Total completed', rows('workouts').filter(w => w.status === 'done').length, 'all time')}</div>
+  <div class="filters"><input type="text" id="wq" data-filter="workouts.q" placeholder="Search workouts" aria-label="Search workouts" value="${esc(f.q)}"><select data-filter="workouts.status" aria-label="Filter by status"><option value="">All statuses</option>${['planned', 'done', 'skipped'].map(s => `<option value="${s}"${f.status === s ? ' selected' : ''}>${cap(s)}</option>`).join('')}</select><select data-filter="workouts.loc" aria-label="Filter by location"><option value="">All locations</option>${['gym', 'home', 'outdoor', 'other'].map(s => `<option value="${s}"${f.loc === s ? ' selected' : ''}>${cap(s)}</option>`).join('')}</select><select data-filter="workouts.sort" aria-label="Sort"><option value="desc"${f.sort === 'desc' ? ' selected' : ''}>Newest first</option><option value="asc"${f.sort === 'asc' ? ' selected' : ''}>Oldest first</option></select></div>
+  ${cards || card('', empty('🏋️', rows('workouts').length ? 'No workouts match your filters.' : 'No workouts yet. Add one, or apply a weekly plan template.', addBtn('workouts', 'New workout')))}
+  ${card('Personal records', prList.length ? `<table class="tbl"><thead><tr><th>Exercise</th><th>Best weight</th><th>Most reps</th></tr></thead><tbody>${prList.map(([n, p]) => `<tr><td>${esc(n)}</td><td>${p.w != null ? dispN('weight', p.w) : '—'}</td><td>${p.r}</td></tr>`).join('')}</tbody></table><p class="small muted">Calculated only from exercises in workouts you marked as done.</p>` : '<p class="muted">Mark workouts as done with logged exercises to see your records.</p>')}
+  ${card('Exercise library', `<details><summary>Browse built-in exercises</summary>${Object.entries(EX_LIB).map(([g, l]) => `<p><strong>${cap(g)}:</strong> ${l.map(esc).join(', ')}</p>`).join('')}</details><h3 style="margin-top:.8rem">My custom exercises</h3>${custom.length ? `<ul class="clean">${custom.map(c => `<li class="row"><div class="grow"><strong>${esc(c.name)}</strong> <span class="badge">${esc(c.muscle_group)}</span></div><div class="btns">${rowBtns('custom_exercises', c.id)}</div></li>`).join('')}</ul>` : '<p class="muted small">None yet.</p>'}${addBtn('custom_exercises', 'Custom exercise')}`)}`;
+};
+
+function ownedEquip() { return rows('equipment').filter(e => e.owned && e.quantity > 0).map(e => e.name.toLowerCase()); }
+PAGES.homegym = () => {
+  const own = ownedEquip(), eq = rows('equipment'), quick = ['Dumbbells', 'Resistance bands', 'Pull-up bar', 'Bench', 'Yoga mat', 'Kettlebell', 'Jump rope'];
+  const routines = HOME_ROUTINES.map(r => ({ r, ok: r.needs.every(k => own.some(o => o.includes(k))) })).sort((a, b) => b.ok - a.ok);
+  return `<div class="top"><h1>Home Gym</h1><div class="btns">${addBtn('equipment', 'Add equipment')}</div></div>
+  ${card('My equipment', `${eq.length ? `<ul class="clean">${eq.map(e => `<li class="row"><div class="grow"><strong>${esc(e.name)}</strong> × ${e.quantity}${e.weight_kg != null ? ' · ' + dispN('weight', e.weight_kg) + ' each' : ''}${e.owned ? '' : ' <span class="badge bad">not owned</span>'}</div><div class="btns">${rowBtns('equipment', e.id)}</div></li>`).join('')}</ul>` : '<p class="muted">No equipment yet. Bodyweight routines work without any.</p>'}<p class="small muted">Quick add:</p><div class="btns">${quick.filter(q => !eq.some(e => e.name.toLowerCase() === q.toLowerCase())).map(q => `<button class="btn sm" data-act="equip-quick" data-name="${esc(q)}">＋ ${esc(q)}</button>`).join('')}</div>`)}
+  ${card('Home workout routines', `<p class="small muted">Routines that match your equipment are listed first. Copy one to your workouts to log it.</p><div class="grid">${routines.map(({ r, ok }) => `<div class="card" style="margin:0;${ok ? '' : 'opacity:.6'}"><h3>${esc(r.n)}</h3><div class="meta">${r.lvl} · ${r.min} min</div><ul class="exl">${r.ex.map(e => `<li><span>${esc(e[0])}</span><span>${e[1]} × ${e[2]}</span></li>`).join('')}</ul>${ok ? `<button class="btn sm primary" data-act="home-copy" data-n="${esc(r.n)}">Copy to my workouts</button>` : `<span class="badge bad">Needs: ${esc(r.needs.join(', '))}</span>`}</div>`).join('')}</div>`)}
+  ${card('Workout timer', `<div class="tabs">${[['stopwatch', 'Stopwatch'], ['interval', 'Intervals'], ['rest', 'Rest timer']].map(([k, l]) => `<button class="btn sm" data-act="tm-mode" data-mode="${k}" aria-pressed="${TM.mode === k}">${l}</button>`).join('')}</div>
+   ${TM.mode === 'interval' ? `<div class="row2"><div class="field"><label for="tmWork">Work (seconds)</label><input id="tmWork" type="number" min="5" max="900" value="${TM.cfg.work}" data-tmcfg="work"></div><div class="field"><label for="tmRest">Rest (seconds)</label><input id="tmRest" type="number" min="0" max="900" value="${TM.cfg.rest}" data-tmcfg="rest"></div></div><div class="field"><label for="tmRounds">Rounds</label><input id="tmRounds" type="number" min="1" max="99" value="${TM.cfg.rounds}" data-tmcfg="rounds"></div>` : ''}
+   ${TM.mode === 'rest' ? `<div class="field"><label for="tmRO">Rest length (seconds)</label><input id="tmRO" type="number" min="5" max="1800" value="${TM.cfg.rest_only}" data-tmcfg="rest_only"></div>` : ''}
+   <div class="timer" id="tmDisp" aria-live="off">00:00</div><div class="center muted" id="tmPhase"></div><div class="btns" style="justify-content:center;margin-top:.6rem"><button class="btn primary" data-act="tm-toggle" id="tmBtn">Start</button><button class="btn" data-act="tm-reset">Reset</button></div>`)}`;
+};
+
+PAGES.nutrition = () => {
+  const tab = curTab('nutrition', 'log');
+  const tabs = tabsBar('nutrition', [['log', 'Food log'], ['plan', 'Meal plan'], ['foods', 'My foods'], ['grocery', 'Grocery list'], ['ideas', 'Ideas'], ['calc', 'Calculator']]);
+  let body = '';
+  if (tab === 'log') {
+    const d = S.date, ms = rows('meals').filter(m => m.meal_date === d), t = mealTotals(d);
+    const mac = (l, v, tg, n) => `<div style="margin:.4rem 0"><strong>${l}</strong>: ${n ? num(v) + ' g' : '<span class="muted">not entered</span>'}${tg ? ` of ${num(tg)} g` : ''}${n && tg ? bar(pct(v, tg)) : ''}</div>`;
+    body = `${dateNav()}<div class="grid two">${card('Totals for the day', `<div><strong>Calories</strong>: ${t.nCal ? num(t.cal) + ' kcal' : '<span class="muted">not entered</span>'}${S.set.calorie_target ? ` of ${num(S.set.calorie_target)}` : ''}${t.nCal && S.set.calorie_target ? bar(pct(t.cal, S.set.calorie_target), t.cal > S.set.calorie_target * 1.1 ? 'warn' : '') : ''}</div>${mac('Protein', t.p, S.set.protein_target, ms.some(m => m.protein_g != null))}${mac('Carbs', t.c, S.set.carbs_target, ms.some(m => m.carbs_g != null))}${mac('Fat', t.f, S.set.fat_target, ms.some(m => m.fat_g != null))}${t.n > t.nCal && t.n ? '<p class="small muted">Some meals have no calories entered, so totals only include what you entered.</p>' : ''}`)}
+    ${card('Targets', `<p>Calories ${num(S.set.calorie_target)} kcal · Protein ${num(S.set.protein_target)} g · Carbs ${num(S.set.carbs_target)} g · Fat ${num(S.set.fat_target)} g</p><button class="btn sm" data-act="tab" data-tab="calc">Open calculator</button> <button class="btn sm" data-act="nav" data-page="settings">Edit in Settings</button>`)}</div>
+    <div class="btns" style="margin-bottom:.8rem">${addBtn('meals', 'Log a meal')}</div>
+    ${MEALTYPES.map(mt => { const l = ms.filter(m => m.meal_type === mt).sort((a, b) => T(a.meal_time).localeCompare(T(b.meal_time))); return card(cap(mt), l.length ? `<ul class="clean">${l.map(m => `<li class="row"><div class="t">${esc(fmtT(m.meal_time))}</div><div class="grow"><strong>${esc(m.food_name)}</strong>${m.portion ? ' · ' + esc(m.portion) : ''}<div class="small muted">${m.calories != null ? num(m.calories) + ' kcal' : 'calories not entered'}${m.protein_g != null ? ' · P ' + num(m.protein_g) + 'g' : ''}${m.carbs_g != null ? ' · C ' + num(m.carbs_g) + 'g' : ''}${m.fat_g != null ? ' · F ' + num(m.fat_g) + 'g' : ''}</div></div><div class="btns">${rowBtns('meals', m.id)}</div></li>`).join('')}</ul>` : '<p class="muted small">Nothing logged.</p>'); }).join('')}`;
+  } else if (tab === 'plan') {
+    const D = dow(today()), todayPlan = rows('meal_plans').filter(p => p.weekday === D);
+    body = `${card('What to eat today', todayPlan.length ? `<ul class="clean">${MEALTYPES.map(mt => todayPlan.filter(p => p.meal_type === mt).map(p => `<li class="row"><div class="t">${cap(mt)}</div><div class="grow">${esc(p.food_name)}</div><button class="btn sm" data-act="plan-eat" data-id="${p.id}">Log it</button></li>`).join('')).join('')}</ul>` : '<p class="muted">Nothing planned for today.</p>')}
+    <div class="btns" style="margin-bottom:.8rem">${addBtn('meal_plans', 'Plan a meal')}</div>
+    ${WD.map((n, wd) => card(n === WD[D] ? n + ' (today)' : n, (() => { const l = rows('meal_plans').filter(p => p.weekday === wd).sort((a, b) => MEALTYPES.indexOf(a.meal_type) - MEALTYPES.indexOf(b.meal_type)); return l.length ? `<ul class="clean">${l.map(p => `<li class="row"><div class="t">${cap(p.meal_type)}</div><div class="grow">${esc(p.food_name)}</div><div class="btns">${rowBtns('meal_plans', p.id)}</div></li>`).join('')}</ul>` : '<p class="muted small">Nothing planned.</p>'; })())).join('')}`;
+  } else if (tab === 'foods') {
+    const l = rows('foods').sort((a, b) => a.name.localeCompare(b.name));
+    body = `<div class="btns" style="margin-bottom:.8rem">${addBtn('foods', 'Add food')}</div>${l.length ? card('', `<ul class="clean">${l.map(f => `<li class="row"><div class="grow"><strong>${esc(f.name)}</strong>${f.serving ? ' · ' + esc(f.serving) : ''}<div class="small muted">${f.calories != null ? num(f.calories) + ' kcal' : 'calories not entered'}${f.protein_g != null ? ' · P ' + num(f.protein_g) + 'g' : ''}${f.carbs_g != null ? ' · C ' + num(f.carbs_g) + 'g' : ''}${f.fat_g != null ? ' · F ' + num(f.fat_g) + 'g' : ''}</div></div><div class="btns">${rowBtns('foods', f.id)}</div></li>`).join('')}</ul>`) : card('', empty('🍎', 'Save foods you eat often so you can log them in two taps.'))}`;
+  } else if (tab === 'grocery') {
+    const need = {}; rows('meal_plans').forEach(p => { const k = p.food_name.trim().toLowerCase(); need[k] = need[k] || { name: p.food_name.trim(), n: 0 }; need[k].n++; });
+    const items = Object.values(need).sort((a, b) => a.name.localeCompare(b.name));
+    body = card('Grocery list from your meal plan', items.length ? `<ul class="clean">${items.map(it => { const g = rows('grocery_items').find(x => x.name.toLowerCase() === it.name.toLowerCase()); return `<li class="row"><label class="grow" style="display:flex;gap:.5rem;align-items:center"><input type="checkbox" data-act="groc" data-name="${esc(it.name)}" ${g && g.checked ? 'checked' : ''}> <span${g && g.checked ? ' style="text-decoration:line-through;color:var(--muted)"' : ''}>${esc(it.name)}${it.n > 1 ? ' × ' + it.n : ''}</span></label></li>`; }).join('')}</ul><button class="btn sm" data-act="groc-clear">Uncheck all</button>` : empty('🛒', 'Plan some meals first and your grocery list will appear here.'));
+  } else if (tab === 'ideas') {
+    const g = S.f.ideaGoal || S.set.goal, diet = S.set.diet || [], avoid = ((S.set.allergies || '') + ',' + (S.set.dislikes || '')).toLowerCase().split(/[,;\n]+/).map(x => x.trim()).filter(x => x.length > 1);
+    const okDiet = lvl => (diet.includes('vegan') ? lvl === 'vegan' : diet.includes('vegetarian') ? lvl !== 'any' : true);
+    const list = IDEAS.filter(i => i[2].includes(g) && okDiet(i[3]) && !avoid.some(a => i[0].toLowerCase().includes(a)));
+    body = `<div class="notice">General meal ideas only — not medical or dietary advice. They use your diet preferences, allergies and dislikes from Settings (${diet.length ? esc(diet.join(', ')) : 'no diet filter'}). Always check ingredients yourself if you have allergies.</div><div class="filters"><select data-filter="f.ideaGoal" aria-label="Goal">${[['lose', 'Fat loss'], ['maintain', 'Maintenance'], ['gain', 'Muscle gain'], ['energy', 'Energy']].map(([k, l]) => `<option value="${k}"${g === k ? ' selected' : ''}>${l}</option>`).join('')}</select></div>${MEALTYPES.map(mt => card(cap(mt), `<ul class="clean">${list.filter(i => i[1] === mt).map(i => `<li class="row"><div class="grow">${esc(i[0])} ${i[3] === 'vegan' ? '<span class="badge">vegan</span>' : i[3] === 'veg' ? '<span class="badge">vegetarian</span>' : ''}</div><button class="btn sm" data-act="idea-log" data-n="${esc(i[0])}" data-mt="${mt}">Log</button><button class="btn sm" data-act="idea-plan" data-n="${esc(i[0])}" data-mt="${mt}">Plan</button></li>`).join('') || '<li class="muted small">No ideas match your filters.</li>'}</ul>`)).join('')}`;
+  } else {
+    const lw = rows('body_measurements').filter(m => m.weight_kg != null).sort((a, b) => a.measure_date.localeCompare(b.measure_date)).pop();
+    const fs = [{ k: 'age', l: 'Age (18 or older)', t: 'number', req: true, min: 18, max: 100, int: true }, { k: 'sex', l: 'Sex (used in the formula)', t: 'select', req: true, opts: [{ v: 'female', l: 'Female' }, { v: 'male', l: 'Male' }] }, { k: 'height_cm', l: 'Height', t: 'number', conv: 'length', req: true, min: 100, max: 250 }, { k: 'weight_kg', l: 'Weight', t: 'number', conv: 'weight', req: true, min: 30, max: 300 }, { k: 'activity', l: 'Activity level', t: 'select', req: true, opts: [{ v: 'sedentary', l: 'Sedentary (little exercise)' }, { v: 'light', l: 'Light (1–3 days/week)' }, { v: 'moderate', l: 'Moderate (3–5 days/week)' }, { v: 'active', l: 'Active (6–7 days/week)' }, { v: 'very_active', l: 'Very active (hard training / physical job)' }] }, { k: 'goal', l: 'Goal', t: 'select', req: true, opts: [{ v: 'lose', l: 'Gradual fat loss' }, { v: 'maintain', l: 'Maintain' }, { v: 'gain', l: 'Gradual muscle gain' }, { v: 'energy', l: 'Energy / general health' }] }];
+    const v = { age: S.set.age, sex: S.set.sex === 'male' || S.set.sex === 'female' ? S.set.sex : null, height_cm: S.set.height_cm, weight_kg: lw ? lw.weight_kg : null, activity: S.set.activity === 'very_active' ? 'very_active' : S.set.activity, goal: S.set.goal };
+    body = card('Calorie & macro estimate', `<div class="notice warn">This is a rough estimate from a standard formula (Mifflin-St Jeor) for healthy adults. It is not medical advice. Ask a doctor or registered dietitian if you have a health condition, are pregnant, or want to lose weight quickly.</div><form data-form="calc" novalidate>${fs.map(f => fld(f, v[f.k])).join('')}<button class="btn primary" type="submit">Calculate</button></form><div id="calcOut"></div>`);
+  }
+  return `<div class="top"><h1>Nutrition</h1></div>${tabs}${body}`;
+};
+
+PAGES.water = () => {
+  const d = S.date, gw = S.set.water_goal_ml, w = waterOn(d), logs = rows('water_logs').filter(x => x.log_date === d).sort((a, b) => T(a.log_time).localeCompare(T(b.log_time)));
+  const quick = S.set.units_volume === 'oz' ? [[4, 118], [8, 237], [16, 473]] : [[150, 150], [250, 250], [500, 500]];
+  return `<div class="top"><h1>Water</h1></div>${dateNav()}
+  <div class="grid two">${card('Progress', `<div class="ring" style="--p:${Math.min(100, Math.round(pct(w, gw)))}"><div>${Math.round(pct(w, gw))}%<br><span class="small muted">${dispN('volume', w, 0)}</span></div></div><p class="center">Goal: ${dispN('volume', gw, 0)}${w >= gw && gw ? ' — reached! 🎉' : ''}</p><p class="center muted">Streak: ${gw ? streak(x => waterOn(x) >= gw) : 0} day(s)</p>`)}
+  ${card('Add water', `<div class="btns">${quick.map(([l, ml]) => `<button class="btn" data-act="water-add" data-ml="${ml}" data-date="${d}">＋ ${l} ${CONV.volume.u()}</button>`).join('')}${addBtn('water_logs', 'Custom amount')}</div><div class="btns" style="margin-top:.8rem"><button class="btn" data-act="water-undo">↩ Undo last</button></div><p class="small muted">Change your daily goal and reminder interval in Settings.</p>`)}</div>
+  ${card('Entries for this day', logs.length ? `<ul class="clean">${logs.map(l => `<li class="row"><div class="t">${esc(fmtT(l.log_time))}</div><div class="grow">${dispN('volume', l.amount_ml, 0)}</div><div class="btns">${rowBtns('water_logs', l.id)}</div></li>`).join('')}</ul>` : empty('💧', 'No water logged for this day.'))}`;
+};
+
+PAGES.sleep = () => {
+  const d = today(), logs = rows('sleep_logs').slice().sort((a, b) => b.wake_at.localeCompare(a.wake_at));
+  const last14 = logs.filter(s => !s.is_nap && s.sleep_date >= addDays(d, -13)), last7 = logs.filter(s => !s.is_nap && s.sleep_date >= addDays(d, -6));
+  const tgt = sleepTargetMin(), avg7 = last7.length ? avg(last7, sleepDur) : null, debt = last7.length ? sum(last7, sleepDur) - last7.length * tgt : null;
+  let cons = null;
+  if (last14.length >= 3) { const beds = last14.map(s => { let m = mins(hm(new Date(s.bed_at))); if (m < 720) m += 1440; return m; }), wakes = last14.map(s => mins(hm(new Date(s.wake_at)))); cons = Math.round(clamp(100 - (sd(beds) + sd(wakes)) / 2 * (100 / 90), 0, 100)); }
+  S.after.push(() => {
+    const days = dateRange(addDays(d, -13), d);
+    mkChart('chSleep', { type: 'bar', data: { labels: days.map(fmtShort), datasets: [{ label: 'Hours slept', data: days.map(x => Math.round(sleepMinOn(x) / 6) / 10), backgroundColor: PAL[3] }, { type: 'line', label: 'Target', data: days.map(() => Math.round(tgt / 6) / 10), borderColor: PAL[1], pointRadius: 0 }] }, options: { scales: { y: { beginAtZero: true } } } });
+  });
+  return `<div class="top"><h1>Sleep</h1><div class="btns">${addBtn('sleep_logs', 'Log sleep')}<button class="btn" data-act="nav" data-page="settings">Change targets</button></div></div>
+  <div class="grid">${statCard('Target', `${fmtT(S.set.bed_time)} → ${fmtT(S.set.wake_time)}`, `${(tgt / 60).toFixed(1)} hours`)}${statCard('7-day average', avg7 != null ? fmtDur(avg7) : '—', last7.length ? `${last7.length} night(s) logged` : 'No data yet')}${statCard('Sleep debt / surplus (7 days)', debt != null ? (debt >= 0 ? '+' : '−') + fmtDur(Math.abs(debt)) : '—', 'compared with your target')}${statCard('Consistency', cons != null ? cons + ' / 100' : '—', '100 = same bed and wake times every day (needs 3+ nights)')}</div>
+  ${card('Last 14 days', chartBox('chSleep', 'Hours slept per night over the last 14 days'))}
+  ${card('Sleep log', logs.length ? `<ul class="clean">${logs.slice(0, 40).map(s => `<li class="row"><div class="t">${esc(fmtShort(s.sleep_date))}</div><div class="grow"><strong>${fmtDur(sleepDur(s))}</strong>${s.is_nap ? ' <span class="badge">nap</span>' : ''} · ${esc(fmtT(hm(new Date(s.bed_at))))} → ${esc(fmtT(hm(new Date(s.wake_at))))}${s.quality ? ` · quality ${s.quality}/5` : ''}${s.notes ? `<div class="small muted">${esc(s.notes)}</div>` : ''}</div><div class="btns">${rowBtns('sleep_logs', s.id)}</div></li>`).join('')}</ul>` : empty('😴', 'No sleep logged yet.', addBtn('sleep_logs', 'Log last night')))}
+  <p class="small muted">Times use your device's clock and time zone, so sleep that crosses midnight or a clock change is measured correctly.</p>`;
+};
+
+PAGES.recovery = () => {
+  const tab = curTab('recovery', 'sessions'), d = today();
+  const ss = rows('recovery_sessions').slice().sort((a, b) => b.session_date.localeCompare(a.session_date));
+  const since = t => { const l = ss.find(x => !t || x.type === t); return l ? Math.max(0, Math.round((parseYmd(d) - parseYmd(l.session_date)) / 86400000)) + ' day(s) ago' : 'never logged'; };
+  let body = '';
+  if (tab === 'sessions') body = `<div class="btns" style="margin-bottom:.8rem">${addBtn('recovery_sessions', 'Log a session')}${addBtn('reminders', 'Massage reminder', { category: 'recovery', title: 'Massage', days: [0], remind_time: '11:00' }).replace('btn primary', 'btn')}</div>${card('', ss.length ? `<ul class="clean">${ss.slice(0, 60).map(s => `<li class="row"><div class="t">${esc(fmtShort(s.session_date))}</div><div class="grow"><strong>${cap(esc(s.type))}</strong>${s.duration_min ? ' · ' + s.duration_min + ' min' : ''}${s.body_area ? ' · ' + esc(s.body_area) : ''}${s.notes ? `<div class="small muted">${esc(s.notes)}</div>` : ''}</div><div class="btns">${rowBtns('recovery_sessions', s.id)}</div></li>`).join('')}</ul>` : empty('💆', 'No recovery sessions yet.'))}`;
+  else {
+    const sl = rows('soreness_logs').slice().sort((a, b) => b.log_date.localeCompare(a.log_date)), recent = {};
+    sl.filter(x => x.log_date >= addDays(d, -7)).forEach(x => { if (!(x.body_area in recent)) recent[x.body_area] = x.level; });
+    const hi = Object.entries(recent).filter(([, l]) => l >= 4);
+    body = `<div class="btns" style="margin-bottom:.8rem">${addBtn('soreness_logs', 'Log soreness')}</div>
+    ${hi.length ? card('Gentle recovery ideas', `<ul>${hi.map(([a, l]) => `<li><strong>${cap(esc(a))}</strong> (${l}/10): ${esc(SORE_TIPS[a] || 'Gentle movement and rest.')}</li>`).join('')}</ul><p class="small muted">General wellness suggestions only. If pain is severe, sudden, lasts more than a few days, or comes with numbness, dizziness or chest discomfort, see a healthcare professional.</p>`) : ''}
+    ${card('', sl.length ? `<ul class="clean">${sl.slice(0, 60).map(s => `<li class="row"><div class="t">${esc(fmtShort(s.log_date))}</div><div class="grow"><strong>${cap(esc(s.body_area))}</strong> · ${s.level}/10${s.notes ? `<div class="small muted">${esc(s.notes)}</div>` : ''}</div><div class="btns">${rowBtns('soreness_logs', s.id)}</div></li>`).join('')}</ul>` : empty('🩹', 'No soreness logged.'))}`;
+  }
+  return `<div class="top"><h1>Recovery & Massage</h1></div><div class="grid">${statCard('Last massage', since('massage'), '')}${statCard('Last recovery session', since(''), '')}</div>${tabsBar('recovery', [['sessions', 'Sessions'], ['soreness', 'Soreness tracker']])}${body}`;
+};
+
+PAGES.supps = () => {
+  const d = S.date, D = dow(d), all = rows('supplements').slice().sort((a, b) => a.name.localeCompare(b.name)), todays = all.filter(s => s.active && (s.days || []).includes(D));
+  let exp = 0, taken = 0; const from = addDays(today(), -29);
+  all.filter(s => s.active).forEach(s => dateRange(from, today()).forEach(x => { if ((s.days || []).includes(dow(x)) && x >= String(s.created_at).slice(0, 10)) { exp++; if (suppStatus(s.id, x) === 'taken') taken++; } }));
+  return `<div class="top"><h1>Supplements & Medicines</h1><div class="btns">${addBtn('supplements', 'Add item')}</div></div>
+  <div class="notice warn">${esc(DISCLAIMER)} Doses here are whatever you enter — DailyWell never suggests, changes or stops any medicine.</div>${dateNav()}
+  <div class="grid">${statCard('30-day adherence', exp ? Math.round(taken / exp * 100) + '%' : '—', exp ? `${taken} of ${exp} scheduled doses marked taken` : 'No scheduled items yet')}</div>
+  ${card(esc(fmtDate(d)), todays.length ? `<ul class="clean">${todays.map(s => { const st = suppStatus(s.id, d); return `<li class="row"><div class="t">${esc((s.times || []).map(fmtT).join(', '))}</div><div class="grow"><strong>${esc(s.name)}</strong>${s.dose != null ? ` · ${s.dose}${s.unit ? ' ' + esc(s.unit) : ''}` : ''}${st ? ` <span class="badge st-${st}">${st}</span>` : ''}</div><div class="btns"><button class="btn sm ${st === 'taken' ? 'primary' : ''}" data-act="supp-set" data-id="${s.id}" data-st="${st === 'taken' ? '' : 'taken'}">${st === 'taken' ? 'Undo' : 'Taken'}</button><button class="btn sm" data-act="supp-set" data-id="${s.id}" data-st="${st === 'skipped' ? '' : 'skipped'}">${st === 'skipped' ? 'Undo' : 'Skipped'}</button></div></li>`; }).join('')}</ul>` : empty('💊', 'Nothing scheduled for this day.'))}
+  ${card('All items', all.length ? `<ul class="clean">${all.map(s => `<li class="row"><div class="grow"><strong>${esc(s.name)}</strong>${s.dose != null ? ` · ${s.dose}${s.unit ? ' ' + esc(s.unit) : ''}` : ''}${s.active ? '' : ' <span class="badge bad">paused</span>'}<div class="small muted">${esc((s.times || []).map(fmtT).join(', '))} · ${(s.days || []).slice().sort().map(x => WD[x]).join(' ')}</div></div><div class="btns">${rowBtns('supplements', s.id)}</div></li>`).join('')}</ul>` : '<p class="muted">None yet.</p>')}`;
+};
+
+PAGES.body = () => {
+  const ms = rows('body_measurements').slice().sort((a, b) => b.measure_date.localeCompare(a.measure_date)), wts = ms.filter(m => m.weight_kg != null);
+  const cur = wts[0], start = S.set.start_weight_kg != null ? S.set.start_weight_kg : (wts.length ? wts[wts.length - 1].weight_kg : null), goal = S.set.goal_weight_kg;
+  const prog = cur && start != null && goal != null && start !== goal ? clamp((start - cur.weight_kg) / (start - goal) * 100, 0, 100) : null;
+  S.after.push(() => {
+    const asc = wts.slice().reverse(); if (!asc.length) return;
+    const vals = asc.map(x => Math.round(toD('weight', x.weight_kg) * 10) / 10), ma = vals.map((_, i) => { const w = vals.slice(Math.max(0, i - 6), i + 1); return Math.round(avg(w) * 10) / 10; });
+    mkChart('chBody', { type: 'line', data: { labels: asc.map(x => fmtShort(x.measure_date)), datasets: [{ label: `Weight (${CONV.weight.u()})`, data: vals, borderColor: PAL[0], tension: .2 }, { label: '7-entry moving average', data: ma, borderColor: PAL[2], borderDash: [5, 4], pointRadius: 0, tension: .3 }] } });
+  });
+  return `<div class="top"><h1>Body Tracking</h1><div class="btns">${addBtn('body_measurements', 'Add measurement')}<button class="btn" data-act="nav" data-page="settings">Set goal weight</button></div></div>
+  <div class="grid">${statCard('Current weight', cur ? dispN('weight', cur.weight_kg) : '—', cur ? fmtDate(cur.measure_date) : 'No weight logged')}${statCard('Start → goal', `${start != null ? dispN('weight', start) : '—'} → ${goal != null ? dispN('weight', goal) : '—'}`, prog != null ? Math.round(prog) + '% of the way' : 'Set a goal weight in Settings', prog != null ? bar(prog, 'ok') : '')}</div>
+  ${card('Weight trend', wts.length ? chartBox('chBody', 'Weight over time with moving average') : empty('📏', 'Log your weight to see a trend.'))}
+  ${card('History', ms.length ? `<div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Date</th><th>Weight</th><th>Body fat</th><th>Waist</th><th>Chest</th><th>Hips</th><th>Arm</th><th>Thigh</th><th>RHR</th><th>BP</th><th></th></tr></thead><tbody>${ms.slice(0, 60).map(m => `<tr><td>${esc(fmtShort(m.measure_date))}</td><td>${m.weight_kg != null ? dispN('weight', m.weight_kg) : '—'}</td><td>${m.body_fat_pct != null ? m.body_fat_pct + '%' : '—'}</td><td>${m.waist_cm != null ? dispN('length', m.waist_cm) : '—'}</td><td>${m.chest_cm != null ? dispN('length', m.chest_cm) : '—'}</td><td>${m.hips_cm != null ? dispN('length', m.hips_cm) : '—'}</td><td>${m.arm_cm != null ? dispN('length', m.arm_cm) : '—'}</td><td>${m.thigh_cm != null ? dispN('length', m.thigh_cm) : '—'}</td><td>${m.resting_hr ?? '—'}</td><td>${m.systolic != null ? m.systolic + '/' + m.diastolic : '—'}</td><td class="btns">${rowBtns('body_measurements', m.id)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">No entries yet.</p>')}
+  <p class="small muted">Progress photos are not included in this version (they would need private file storage). ${esc(DISCLAIMER)}</p>`;
+};
+
+PAGES.habits = () => {
+  const d = S.date, hs = rows('habits').filter(h => h.active), all = rows('habits'), ci = rows('daily_checkins').find(c => c.checkin_date === d);
+  const first = d.slice(0, 8) + '01', dim = new Date(parseYmd(d).getFullYear(), parseYmd(d).getMonth() + 1, 0).getDate(), lead = parseYmd(first).getDay();
+  let heat = WD.map(x => `<div class="hd">${x[0]}</div>`).join('') + '<div style="visibility:hidden"></div>'.repeat(lead);
+  for (let i = 1; i <= dim; i++) { const x = d.slice(0, 8) + pad(i), fut = x > today(); const f = hs.length && !fut ? hs.filter(h => hasHabit(h.id, x)).length / hs.length : 0; heat += `<div class="${f > 0 ? 'l' + Math.min(4, Math.ceil(f * 4)) : ''}" title="${esc(fmtShort(x))}">${i}</div>`; }
+  const ws = weekStart(d);
+  const cf = [{ k: 'mood', l: 'Mood (1–5)', t: 'range', min: 1, max: 5 }, { k: 'energy', l: 'Energy (1–5)', t: 'range', min: 1, max: 5 }, { k: 'stress', l: 'Stress (1–5)', t: 'range', min: 1, max: 5 }, { k: 'note', l: 'Journal note (optional)', t: 'textarea', max: 1000 }];
+  return `<div class="top"><h1>Habits & Check-in</h1><div class="btns">${addBtn('habits', 'New habit')}</div></div>${dateNav()}
+  ${card('Habits for ' + esc(fmtDate(d)), hs.length ? `<ul class="clean">${hs.map(h => { const wk = dateRange(ws, addDays(ws, 6)).filter(x => hasHabit(h.id, x)).length; return `<li class="row ${hasHabit(h.id, d) ? 'done' : ''}"><div class="grow"><strong>${esc(h.name)}</strong><div class="small muted">This week: ${wk}/${h.target_per_week} · streak ${streak(x => hasHabit(h.id, x), d)} day(s)</div></div><button class="btn sm ${hasHabit(h.id, d) ? 'primary' : ''}" data-act="habit-tgl" data-id="${h.id}" aria-pressed="${hasHabit(h.id, d)}">${hasHabit(h.id, d) ? '✓ Done' : 'Mark done'}</button><span class="btns">${rowBtns('habits', h.id)}</span></li>`; }).join('')}</ul>` : empty('🔥', 'Create a habit like "No sugar" or "Read 20 minutes".', addBtn('habits', 'New habit')))}
+  <div class="grid two">${card('Month at a glance', `<div class="heat">${heat}</div><p class="small muted">Darker = more of your active habits completed.</p>`)}
+  ${card('Daily check-in', `<form data-form="checkin" novalidate>${cf.map(f => fld(f, ci ? ci[f.k === 'note' ? 'note' : f.k] : null)).join('')}<button class="btn primary" type="submit">Save check-in</button></form>`)}</div>
+  ${all.filter(h => !h.active).length ? card('Paused habits', all.filter(h => !h.active).map(h => `<div class="row"><div class="grow">${esc(h.name)}</div>${rowBtns('habits', h.id)}</div>`).join('')) : ''}`;
+};
+
+PAGES.reminders = () => {
+  const l = rows('reminders').slice().sort((a, b) => T(a.remind_time).localeCompare(T(b.remind_time))), auto = S.set.auto_reminders ? todayReminders().filter(r => !r.key.startsWith('r:')) : [];
+  const perm = 'Notification' in window ? Notification.permission : 'unsupported';
+  return `<div class="top"><h1>Reminders</h1><div class="btns">${addBtn('reminders', 'New reminder')}</div></div>
+  <div class="notice"><strong>How reminders work:</strong> DailyWell shows a banner (and, if you allow it, a browser notification) at the right time <em>while the app is open in a tab or window</em>. On a static website, reliable background push when the app is closed is not possible without extra server setup. Quiet hours: ${S.set.quiet_start && S.set.quiet_end ? esc(fmtT(S.set.quiet_start)) + ' – ' + esc(fmtT(S.set.quiet_end)) : 'off'} (change in Settings). Browser notifications: ${S.set.browser_notifications && perm === 'granted' ? 'on' : 'off'}. <button class="btn sm" data-act="notif-toggle">${S.set.browser_notifications ? 'Turn off notifications' : 'Turn on notifications'}</button></div>
+  ${card('My reminders', l.length ? `<ul class="clean">${l.map(r => `<li class="row"><div class="t">${esc(fmtT(r.remind_time))}</div><div class="grow"><strong>${esc(r.title)}</strong> <span class="badge">${esc(r.category)}</span>${r.active ? '' : ' <span class="badge bad">paused</span>'}<div class="small muted">${(r.days || []).slice().sort().map(x => WD[x]).join(' · ')}</div></div><div class="btns">${rowBtns('reminders', r.id)}</div></li>`).join('')}</ul>` : empty('⏰', 'No custom reminders yet. Examples: massage on Sundays, take vitamins at 8:00.', addBtn('reminders', 'New reminder')))}
+  ${card('Automatic reminders today', S.set.auto_reminders ? (auto.length ? `<ul class="clean">${auto.map(r => `<li class="row"><div class="t">${esc(fmtT(r.time))}</div><div class="grow">${esc(r.title)}</div></li>`).join('')}</ul>` : '<p class="muted">None today.</p>') : '<p class="muted">Automatic reminders are off (Settings).</p>')}`;
+};
+
+/* ---------- reports ---------- */
+function csvCell(v) {
+  if (v == null) return ''; let s = Array.isArray(v) ? v.join('; ') : typeof v === 'object' ? JSON.stringify(v) : String(v);
+  if (typeof v === 'string' && /^[=+\-@\t\r]/.test(s)) s = "'" + s;
+  return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+function toCSV(t) {
+  const data = rows(t); if (!data.length) return '';
+  const cols = [...new Set(data.flatMap(r => Object.keys(r)))].filter(c => c !== 'user_id');
+  return [cols.join(','), ...data.map(r => cols.map(c => csvCell(r[c])).join(','))].join('\r\n');
+}
+function download(name, text, type) { const a = document.createElement('a'); const url = URL.createObjectURL(new Blob([text], { type })); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); }
+PAGES.reports = () => {
+  const { from, to } = S.rep, days = dateRange(from, to), n = days.length;
+  const sum7 = (a, b) => { const ds = dateRange(a, b); const sl = ds.map(sleepMinOn).filter(m => m > 0), cl = ds.map(mealTotals).filter(m => m.nCal); return { w: rows('workouts').filter(x => x.status === 'done' && x.workout_date >= a && x.workout_date <= b).length, sl: sl.length ? avg(sl) : null, wa: avg(ds, waterOn), cal: cl.length ? avg(cl, m => m.cal) : null, hab: (() => { const hs = rows('habits').filter(h => h.active); return hs.length ? Math.round(sum(hs, h => ds.filter(x => hasHabit(h.id, x)).length) / (hs.length * ds.length) * 100) : null; })() }; };
+  const wk = sum7(addDays(today(), -6), today()), mo = sum7(addDays(today(), -29), today());
+  const sumRow = (l, s) => `<tr><td>${l}</td><td>${s.w}</td><td>${s.sl != null ? fmtDur(s.sl) : '—'}</td><td>${dispN('volume', s.wa, 0)}</td><td>${s.cal != null ? num(s.cal) + ' kcal' : '—'}</td><td>${s.hab != null ? s.hab + '%' : '—'}</td></tr>`;
+  const exNames = [...new Set(rows('workout_exercises').map(x => x.exercise_name))].sort(); if (!S.rep.ex && exNames.length) S.rep.ex = exNames[0];
+  const measOpts = [['weight_kg', 'Weight', 'weight'], ['waist_cm', 'Waist', 'length'], ['chest_cm', 'Chest', 'length'], ['hips_cm', 'Hips', 'length'], ['arm_cm', 'Arm', 'length'], ['thigh_cm', 'Thigh', 'length'], ['body_fat_pct', 'Body fat %', ''], ['resting_hr', 'Resting heart rate', '']];
+  S.after.push(() => {
+    const done = rows('workouts').filter(w => w.status === 'done' && w.workout_date >= from && w.workout_date <= to), wkl = {};
+    done.forEach(w => { const k = weekStart(w.workout_date); const o = wkl[k] || (wkl[k] = { n: 0, vol: 0 }); o.n++; o.vol += sum(rows('workout_exercises').filter(x => x.workout_id === w.id), x => x.sets * x.reps * (x.weight_kg || 0)); });
+    const wks = Object.keys(wkl).sort();
+    mkChart('chWk', { type: 'bar', data: { labels: wks.map(fmtShort), datasets: [{ label: 'Workouts', data: wks.map(k => wkl[k].n), backgroundColor: PAL[0], yAxisID: 'y' }, { type: 'line', label: `Volume (${CONV.weight.u()})`, data: wks.map(k => Math.round(toD('weight', wkl[k].vol))), borderColor: PAL[2], yAxisID: 'y1' }] }, options: { scales: { y: { beginAtZero: true, ticks: { precision: 0 } }, y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false } } } } });
+    const pts = rows('workout_exercises').filter(x => x.exercise_name === S.rep.ex && x.weight_kg != null).map(x => { const w = rows('workouts').find(y => y.id === x.workout_id); return w && w.status === 'done' && w.workout_date >= from && w.workout_date <= to ? { d: w.workout_date, v: x.weight_kg } : null; }).filter(Boolean), by = {};
+    pts.forEach(p => { by[p.d] = Math.max(by[p.d] || 0, p.v); }); const ds = Object.keys(by).sort();
+    mkChart('chStr', { type: 'line', data: { labels: ds.map(fmtShort), datasets: [{ label: `${S.rep.ex || 'Exercise'} — best weight (${CONV.weight.u()})`, data: ds.map(k => Math.round(toD('weight', by[k]) * 10) / 10), borderColor: PAL[4], tension: .2 }] } });
+    const ct = days.map(mealTotals), ci = ct.map((t, i) => (t.nCal ? i : -1)).filter(i => i >= 0);
+    mkChart('chCal', { type: 'line', data: { labels: ci.map(i => fmtShort(days[i])), datasets: [{ label: 'Calories', data: ci.map(i => ct[i].cal), borderColor: PAL[2], tension: .2 }, { label: 'Target', data: ci.map(() => S.set.calorie_target), borderColor: PAL[1], borderDash: [5, 4], pointRadius: 0 }] } });
+    const mp = ct.filter(t => t.nP), mAvg = k => (mp.length ? Math.round(avg(mp, t => t[k])) : 0);
+    mkChart('chMac', { type: 'bar', data: { labels: ['Protein', 'Carbs', 'Fat'], datasets: [{ label: 'Average (g)', data: [mAvg('p'), mAvg('c'), mAvg('f')], backgroundColor: PAL[0] }, { label: 'Target (g)', data: [S.set.protein_target, S.set.carbs_target, S.set.fat_target], backgroundColor: PAL[1] }] } });
+    mkChart('chWater', { type: 'bar', data: { labels: days.map(fmtShort), datasets: [{ label: `Water (${CONV.volume.u()})`, data: days.map(x => Math.round(toD('volume', waterOn(x)))), backgroundColor: PAL[5] }, { type: 'line', label: 'Goal', data: days.map(() => Math.round(toD('volume', S.set.water_goal_ml))), borderColor: PAL[1], pointRadius: 0 }] } });
+    mkChart('chSl', { type: 'bar', data: { labels: days.map(fmtShort), datasets: [{ label: 'Hours slept', data: days.map(x => Math.round(sleepMinOn(x) / 6) / 10), backgroundColor: PAL[3] }, { type: 'line', label: 'Target', data: days.map(() => Math.round(sleepTargetMin() / 6) / 10), borderColor: PAL[1], pointRadius: 0 }] }, options: { scales: { y: { beginAtZero: true } } } });
+    const mo = measOpts.find(o => o[0] === S.rep.meas) || measOpts[0], bm = rows('body_measurements').filter(x => x[mo[0]] != null && x.measure_date >= from && x.measure_date <= to).sort((a, b) => a.measure_date.localeCompare(b.measure_date));
+    mkChart('chMeas', { type: 'line', data: { labels: bm.map(x => fmtShort(x.measure_date)), datasets: [{ label: mo[1] + (mo[2] ? ` (${CONV[mo[2]].u()})` : ''), data: bm.map(x => Math.round((mo[2] ? toD(mo[2], x[mo[0]]) : x[mo[0]]) * 10) / 10), borderColor: PAL[0], tension: .2 }] } });
+    const hs = rows('habits').filter(h => h.active);
+    mkChart('chHab', { type: 'bar', data: { labels: hs.map(h => h.name), datasets: [{ label: 'Completion %', data: hs.map(h => Math.round(days.filter(x => hasHabit(h.id, x)).length / n * 100)), backgroundColor: PAL[1] }] }, options: { indexAxis: 'y', scales: { x: { beginAtZero: true, max: 100 } } } });
+    const g = rows('workouts').filter(w => w.status === 'done' && w.workout_date >= from && w.workout_date <= to), locs = ['gym', 'home', 'outdoor', 'other'];
+    mkChart('chLoc', { type: 'doughnut', data: { labels: locs.map(cap), datasets: [{ data: locs.map(l => g.filter(w => w.location === l).length), backgroundColor: PAL }] } });
+    const mc = rows('daily_checkins').filter(c => c.checkin_date >= from && c.checkin_date <= to).sort((a, b) => a.checkin_date.localeCompare(b.checkin_date));
+    mkChart('chMood', { type: 'line', data: { labels: mc.map(c => fmtShort(c.checkin_date)), datasets: [{ label: 'Mood', data: mc.map(c => c.mood), borderColor: PAL[1] }, { label: 'Energy', data: mc.map(c => c.energy), borderColor: PAL[2] }, { label: 'Stress', data: mc.map(c => c.stress), borderColor: PAL[4] }] }, options: { scales: { y: { min: 1, max: 5, ticks: { stepSize: 1 } } } } });
+  });
+  const ins = insights(), g = rows('workouts').filter(w => w.status === 'done' && w.workout_date >= from && w.workout_date <= to);
+  return `<div class="top"><h1>Reports</h1><div class="btns no-print"><button class="btn" data-act="print">🖨 Print summary</button></div></div>
+  <div class="filters"><div><label class="small" for="rf">From</label><input type="date" id="rf" data-rep="from" value="${from}"></div><div><label class="small" for="rt">To</label><input type="date" id="rt" data-rep="to" value="${to}"></div><div class="btns" style="align-items:flex-end"><button class="btn sm" data-act="rep-range" data-n="7">7 days</button><button class="btn sm" data-act="rep-range" data-n="30">30 days</button><button class="btn sm" data-act="rep-range" data-n="90">90 days</button></div></div>
+  ${card('Summary', `<div style="overflow-x:auto"><table class="tbl"><thead><tr><th></th><th>Workouts done</th><th>Avg sleep</th><th>Avg water / day</th><th>Avg calories (logged days)</th><th>Habits done</th></tr></thead><tbody>${sumRow('Last 7 days', wk)}${sumRow('Last 30 days', mo)}</tbody></table></div>${ins.length ? `<h3 style="margin-top:.8rem">Insights</h3><ul>${ins.map(i => `<li>${esc(i)}</li>`).join('')}</ul>` : ''}`)}
+  <div class="grid two">
+   ${card('Workouts per week & volume', chartBox('chWk', 'Workouts per week and training volume'))}
+   ${card('Strength progress', exNames.length ? `<select data-rep="ex" aria-label="Exercise" class="no-print">${exNames.map(x => `<option${x === S.rep.ex ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select>${chartBox('chStr', 'Best weight per workout for the selected exercise')}` : empty('💪', 'Log exercises with weights to see progress.'))}
+   ${card('Calories vs. target', chartBox('chCal', 'Daily calories compared with target'))}
+   ${card('Average macros vs. targets', chartBox('chMac', 'Average protein, carbs and fat versus targets'))}
+   ${card('Water', chartBox('chWater', 'Daily water intake'))}
+   ${card('Sleep duration', chartBox('chSl', 'Hours slept per day'))}
+   ${card('Body measurements', `<select data-rep="meas" aria-label="Measurement" class="no-print">${measOpts.map(o => `<option value="${o[0]}"${o[0] === S.rep.meas ? ' selected' : ''}>${o[1]}</option>`).join('')}</select>${chartBox('chMeas', 'Selected body measurement over time')}`)}
+   ${card('Habit completion', rows('habits').some(h => h.active) ? chartBox('chHab', 'Habit completion percent') : empty('🔥', 'No habits yet.'))}
+   ${card('Gym vs. home vs. outdoor', g.length ? `${chartBox('chLoc', 'Completed workouts by location')}<p class="small muted">${['gym', 'home', 'outdoor', 'other'].map(l => `${cap(l)}: ${g.filter(w => w.location === l).length} workouts, ${sum(g.filter(w => w.location === l), w => w.duration_min)} min`).join(' · ')}</p>` : empty('🏠', 'No completed workouts in this range.'))}
+   ${card('Mood, energy & stress', chartBox('chMood', 'Check-in scores over time'))}
+  </div>
+  ${card('Export my data (CSV)', `<div class="btns no-print"><select id="csvSel" aria-label="Dataset">${TABLES.map(t => `<option value="${t}">${cap(t.replace(/_/g, ' '))} (${rows(t).length})</option>`).join('')}</select><button class="btn" data-act="export-csv">Download CSV</button><button class="btn" data-act="export-json">Download everything (JSON)</button></div><p class="small muted">Only your own data is exported. Text cells that start with = + - or @ are prefixed with an apostrophe so spreadsheets cannot run them as formulas. Weights, lengths and volumes are exported in kg, cm and ml.</p>`, 'no-print')}`;
+};
+
+/* ---------- settings ---------- */
+const TZS = (() => { try { return Intl.supportedValuesOf('timeZone'); } catch { return ['UTC']; } })();
+const SET_SECTIONS = () => [
+  ['Profile', [{ k: 'display_name', l: 'Display name', t: 'text', max: 80, src: 'profile' }, { k: 'time_zone', l: 'Time zone (for reference — the app uses your device clock)', t: 'select', opts: TZS.map(z => ({ v: z, l: z })), src: 'profile' }]],
+  ['Units & appearance', [{ k: 'units_weight', l: 'Weight', t: 'select', req: true, opts: [{ v: 'kg', l: 'Kilograms' }, { v: 'lb', l: 'Pounds' }] }, { k: 'units_length', l: 'Length', t: 'select', req: true, opts: [{ v: 'cm', l: 'Centimeters' }, { v: 'in', l: 'Inches' }] }, { k: 'units_volume', l: 'Liquids', t: 'select', req: true, opts: [{ v: 'ml', l: 'Milliliters' }, { v: 'oz', l: 'Fluid ounces' }] }, { k: 'time_format', l: 'Clock', t: 'select', req: true, opts: [{ v: '12', l: '12-hour' }, { v: '24', l: '24-hour' }] }, { k: 'theme', l: 'Theme', t: 'select', req: true, opts: [{ v: 'auto', l: 'Match my device' }, { v: 'light', l: 'Light' }, { v: 'dark', l: 'Dark' }] }]],
+  ['About you (optional)', [{ k: 'age', l: 'Age', t: 'number', min: 5, max: 120, int: true }, { k: 'sex', l: 'Sex (used only by the calorie calculator)', t: 'select', opts: [{ v: 'female', l: 'Female' }, { v: 'male', l: 'Male' }, { v: 'other', l: 'Prefer not to say' }] }, { k: 'height_cm', l: 'Height', t: 'number', conv: 'length', min: 50, max: 275 }, { k: 'activity', l: 'Activity level', t: 'select', req: true, opts: [{ v: 'sedentary', l: 'Sedentary' }, { v: 'light', l: 'Light' }, { v: 'moderate', l: 'Moderate' }, { v: 'active', l: 'Active' }, { v: 'very_active', l: 'Very active' }] }, { k: 'start_weight_kg', l: 'Starting weight', t: 'number', conv: 'weight', min: 20, max: 500 }, { k: 'goal_weight_kg', l: 'Goal weight', t: 'number', conv: 'weight', min: 20, max: 500 }]],
+  ['Goals & targets', [{ k: 'goal', l: 'Main goal', t: 'select', req: true, opts: [{ v: 'lose', l: 'Gradual fat loss' }, { v: 'maintain', l: 'Maintain' }, { v: 'gain', l: 'Gradual muscle gain' }, { v: 'energy', l: 'Energy / general health' }] }, { k: 'workouts_per_week_goal', l: 'Workouts per week', t: 'number', req: true, min: 0, max: 14, int: true }, { k: 'calorie_target', l: 'Calories per day (kcal)', t: 'number', min: 0, max: 10000, int: true }, { k: 'protein_target', l: 'Protein (g)', t: 'number', min: 0, max: 1000, int: true }, { k: 'carbs_target', l: 'Carbs (g)', t: 'number', min: 0, max: 2000, int: true }, { k: 'fat_target', l: 'Fat (g)', t: 'number', min: 0, max: 1000, int: true }, { k: 'water_goal_ml', l: 'Water goal per day', t: 'number', conv: 'volume', req: true, min: 0, max: 20000 }]],
+  ['Food preferences', [{ k: 'diet', l: 'Diet', t: 'checks', opts: [{ v: 'vegetarian', l: 'Vegetarian' }, { v: 'vegan', l: 'Vegan' }, { v: 'halal', l: 'Halal' }] }, { k: 'allergies', l: 'Allergies (comma separated)', t: 'text', max: 300 }, { k: 'dislikes', l: 'Foods I dislike (comma separated)', t: 'text', max: 300 }]],
+  ['Sleep & reminders', [{ k: 'bed_time', l: 'Target bedtime', t: 'time', req: true }, { k: 'wake_time', l: 'Target wake-up time', t: 'time', req: true }, { k: 'wind_down_min', l: 'Wind-down reminder (minutes before bed)', t: 'number', req: true, min: 0, max: 240, int: true }, { k: 'water_reminder_hours', l: 'Water reminder every … hours (0 = off)', t: 'number', min: 0, max: 12 }, { k: 'quiet_start', l: 'Quiet hours start (optional)', t: 'time' }, { k: 'quiet_end', l: 'Quiet hours end (optional)', t: 'time' }, { k: 'auto_reminders', l: 'Automatic reminders (plan, supplements, workouts, sleep, water)', t: 'bool' }]]
+];
+PAGES.settings = () => {
+  const secs = SET_SECTIONS(), v = k => (k === 'display_name' || k === 'time_zone' ? S.profile[k] : S.set[k]);
+  return `<div class="top"><h1>Settings</h1></div>
+  <form data-form="settings" novalidate>${secs.map(([t, fs]) => card(t, `<div class="grid">${fs.map(f => fld(f, f.k === 'time_zone' ? (S.profile.time_zone || Intl.DateTimeFormat().resolvedOptions().timeZone) : f.t === 'time' ? T(v(f.k)) : v(f.k))).join('')}</div>`)).join('')}<button class="btn primary" type="submit">Save settings</button></form>
+  <div style="height:1rem"></div>
+  ${card('Your data', `<div class="btns"><button class="btn" data-act="export-json">Download everything (JSON)</button><button class="btn" data-act="nav" data-page="reports">Export CSV…</button><button class="btn" data-act="sample-load">Load sample data</button><button class="btn" data-act="sample-clear">Clear sample data</button></div><p class="small muted">Sample data is marked so it can be removed without touching your own entries.</p>`)}
+  ${card('Account', `<p>${CLOUD ? `Signed in as <strong>${esc(S.user.email)}</strong>.` : '<strong>Local demo mode:</strong> your data is stored only in this browser on this device. It is not synced and is not protected by an account.'}</p><div class="btns">${CLOUD ? '<button class="btn" data-act="change-pw">Change password</button>' : ''}<button class="btn" data-act="logout">${CLOUD ? 'Log out' : 'Leave demo'}</button><button class="btn danger" data-act="delete-account">Delete my account and data</button></div>`)}
+  ${card('Privacy & health notice', `<p>${esc(DISCLAIMER)}</p><p class="small muted">Your entries are stored in your private account database and protected by row-level security so only you can read them. DailyWell does not send your health data to AI services, advertisers or analytics tools. This website's code is public, but your data is not.</p>`)}`;
+};
+
+/* ---------- actions ---------- */
+const TM = { mode: 'stopwatch', running: false, t0: 0, acc: 0, phase: 'work', round: 1, iv: null, cfg: { work: 40, rest: 20, rounds: 8, rest_only: 60 } };
+const fmtClock = s => { s = Math.max(0, Math.ceil(s)); return pad(Math.floor(s / 60)) + ':' + pad(s % 60); };
+function tone() { try { const A = window.AudioContext || window.webkitAudioContext, c = new A(), o = c.createOscillator(), g = c.createGain(); o.connect(g); g.connect(c.destination); o.frequency.value = 880; g.gain.value = .15; o.start(); setTimeout(() => { o.stop(); c.close(); }, 350); } catch (e) { /* ignore */ } if (navigator.vibrate) navigator.vibrate([200, 100, 200]); }
+const tmElapsed = () => TM.acc + (TM.running ? (Date.now() - TM.t0) / 1000 : 0);
+function tmReset() { TM.running = false; TM.acc = 0; TM.phase = 'work'; TM.round = 1; clearInterval(TM.iv); tmDraw(); }
+function tmDraw(txt, phase) {
+  const d = $('#tmDisp'), p = $('#tmPhase'), b = $('#tmBtn'); if (!d) return;
+  const e = tmElapsed();
+  if (txt == null) txt = TM.mode === 'stopwatch' ? fmtClock(Math.floor(e)) : TM.mode === 'rest' ? fmtClock(TM.cfg.rest_only - e) : fmtClock((TM.phase === 'work' ? TM.cfg.work : TM.cfg.rest) - e);
+  d.textContent = txt; p.textContent = phase != null ? phase : TM.mode === 'interval' ? `${cap(TM.phase)} · round ${TM.round} of ${TM.cfg.rounds}` : ''; b.textContent = TM.running ? 'Pause' : (e > 0 ? 'Resume' : 'Start');
+}
+function tmTick() {
+  const e = tmElapsed();
+  if (TM.mode === 'rest' && TM.cfg.rest_only - e <= 0) { tone(); tmReset(); tmDraw('Done!', 'Rest finished'); return; }
+  if (TM.mode === 'interval') {
+    const len = TM.phase === 'work' ? TM.cfg.work : TM.cfg.rest;
+    if (len - e <= 0) { tone(); if (TM.phase === 'work' && TM.cfg.rest > 0) TM.phase = 'rest'; else { TM.phase = 'work'; TM.round++; } if (TM.round > TM.cfg.rounds) { tmReset(); tmDraw('Done!', 'Workout finished'); return; } TM.acc = 0; TM.t0 = Date.now(); }
+  }
+  tmDraw();
+}
+
+const ACT = {
+  nav: el => { S.page = el.dataset.page; S.menuClose && S.menuClose(); render(); window.scrollTo(0, 0); },
+  more: () => { const m = modal({ title: 'Menu', body: `<div class="nav" style="display:grid;gap:.2rem">${NAV.map(([k, l, i]) => `<a role="button" tabindex="0" data-act="nav" data-page="${k}"><span aria-hidden="true">${i}</span> ${esc(l)}</a>`).join('')}</div>` }); S.menuClose = m.close; },
+  add: el => { const E = el.dataset.ent; openForm(E, null, parseJSON(el.dataset.preset) || {}, parseJSON(el.dataset.parent) || {}); },
+  edit: el => { const E = ENT[el.dataset.ent]; openForm(el.dataset.ent, rows(E.table).find(x => x.id === el.dataset.id)); },
+  del: el => deleteRow(el.dataset.ent, el.dataset.id),
+  dprev: () => { S.date = addDays(S.date, -1); render(); }, dnext: () => { S.date = addDays(S.date, 1); render(); }, dtoday: () => { S.date = today(); render(); },
+  tab: el => { S.tab[S.page] = el.dataset.tab; render(); },
+  tgl: async el => { await toggleItem(el.dataset.kind, el.dataset.id, today()); render(); },
+  'plan-set': async el => { await setLog('routine_log', 'item_id', el.dataset.id, S.date, el.dataset.st || null); render(); },
+  'plan-tpl': () => {
+    modal({ title: 'Add a routine template', body: `<p class="small muted">Adds a set of timed items you can edit afterwards. Existing items are kept.</p><div class="field"><label for="tplName">Template</label><select id="tplName" name="tplName">${Object.keys(PLAN_TPL).map(k => `<option>${k}</option>`).join('')}</select></div>${fld({ k: 'days', l: 'Days', t: 'checks', num: true, opts: DAYOPTS }, PLAN_TPL.Weekday.days)}`, submit: 'Add items',
+      onSubmit: async form => { const tpl = PLAN_TPL[form.elements.tplName.value], days = [...form.querySelectorAll('input[name=days]:checked')].map(i => Number(i.value)); if (!days.length) { form.querySelector('#e_days').textContent = 'Choose at least one day.'; return false; } await DB.insertMany('routine_items', tpl.items.map(([t, title, category]) => ({ title, item_time: t, category, days, active: true }))); toast('Template added.', 'ok'); render(); } });
+  },
+  'plan-copy': async () => {
+    const y = addDays(S.date, -1), Dy = dow(y), Dt = dow(S.date), src = rows('routine_items').filter(i => (i.days || []).includes(Dy) && !(i.days || []).includes(Dt));
+    if (!src.length) return toast("Nothing to copy: today's plan already includes everything from yesterday.");
+    if (!(await confirmBox(`Add ${src.length} item(s) from yesterday's plan to ${WD[Dt]}?`, 'Copy', 'Copy plan'))) return;
+    for (const i of src) await DB.update('routine_items', i.id, { days: [...i.days, Dt] }); toast('Plan copied.', 'ok'); render();
+  },
+  'wk-status': async el => { await DB.update('workouts', el.dataset.id, { status: el.dataset.st }); render(); },
+  'wk-tpl': () => {
+    modal({ title: 'Weekly workout plan', body: `<p class="small muted">Creates planned workouts for the 7 days starting on the date you choose. You can edit or delete any of them.</p><div class="field"><label for="wt">Template</label><select id="wt" name="wt">${Object.keys(WK_TPL).map(k => `<option>${k}</option>`).join('')}</select></div>${fld({ k: 'start', l: 'Start date', t: 'date', req: true }, today())}${fld({ k: 'loc', l: 'Location', t: 'select', req: true, opts: opt(['gym', 'home']) }, 'gym')}`, submit: 'Create',
+        onSubmit: async form => { const { out, errs } = readForm(form, [{ k: 'start', l: '', t: 'date', req: true }, { k: 'loc', t: 'select', req: true, opts: opt(['gym', 'home']) }]); showErrs(form, errs); if (Object.keys(errs).length) return false; const tpl = WK_TPL[form.elements.wt.value], arr = []; for (let i = 0; i < 7; i++) { const day = addDays(out.start, i); tpl.filter(t => t[0] === dow(day)).forEach(t => arr.push({ title: t[1], workout_date: day, type: 'strength', location: out.loc, muscle_groups: t[2], status: 'planned', start_time: '17:30' })); } await DB.insertMany('workouts', arr); toast(`${arr.length} workouts planned.`, 'ok'); render(); } });
+  },
+  'equip-quick': async el => { const n = el.dataset.name; await DB.insert('equipment', { name: n, quantity: 1, owned: true }); render(); },
+  'home-copy': async el => {
+    const r = HOME_ROUTINES.find(x => x.n === el.dataset.n); if (!r) return;
+    const w = await DB.insert('workouts', { title: r.n, workout_date: today(), duration_min: r.min, type: 'strength', location: 'home', muscle_groups: [], status: 'planned' });
+    await DB.insertMany('workout_exercises', r.ex.map(e => ({ workout_id: w.id, exercise_name: e[0], sets: e[1], reps: e[2], rest_sec: e[3] })));
+    toast('Added to today\'s workouts.', 'ok'); S.page = 'workouts'; render();
+  },
+  'tm-mode': el => { tmReset(); TM.mode = el.dataset.mode; render(); },
+  'tm-toggle': () => { if (TM.running) { TM.acc = tmElapsed(); TM.running = false; clearInterval(TM.iv); } else { TM.t0 = Date.now(); TM.running = true; clearInterval(TM.iv); TM.iv = setInterval(tmTick, 250); } tmDraw(); },
+  'tm-reset': () => tmReset(),
+  'water-add': async el => { const ml = Number(el.dataset.ml); if (!(ml > 0 && ml <= 5000)) return; const d = el.dataset.date || today(); await DB.insert('water_logs', { log_date: d, log_time: nowHM(), amount_ml: ml }); toast('Water added 💧', 'ok'); render(); },
+  'water-undo': async () => { const l = rows('water_logs').filter(x => x.log_date === S.date).sort((a, b) => String(a.created_at).localeCompare(String(b.created_at))).pop(); if (!l) return toast('Nothing to undo.'); await DB.remove('water_logs', l.id); render(); },
+  groc: async el => { const n = el.dataset.name, g = rows('grocery_items').find(x => x.name.toLowerCase() === n.toLowerCase()); if (g) await DB.update('grocery_items', g.id, { checked: el.checked }); else await DB.insert('grocery_items', { name: n, checked: el.checked }); render(); },
+  'groc-clear': async () => { for (const g of rows('grocery_items').filter(x => x.checked)) await DB.update('grocery_items', g.id, { checked: false }); render(); },
+  'plan-eat': el => { const p = rows('meal_plans').find(x => x.id === el.dataset.id); if (p) openForm('meals', null, { meal_date: today(), meal_type: p.meal_type, food_name: p.food_name }); },
+  'idea-log': el => openForm('meals', null, { meal_date: S.date, meal_type: el.dataset.mt, food_name: el.dataset.n }),
+  'idea-plan': el => openForm('meal_plans', null, { meal_type: el.dataset.mt, food_name: el.dataset.n }),
+  'supp-set': async el => { await setLog('supplement_logs', 'supplement_id', el.dataset.id, S.date, el.dataset.st || null); render(); },
+  'habit-tgl': async el => { await toggleHabit(el.dataset.id, S.date); render(); },
+  'rep-range': el => { S.rep.to = today(); S.rep.from = addDays(today(), -(Number(el.dataset.n) - 1)); render(); },
+  print: () => window.print(),
+  'export-csv': () => { const t = $('#csvSel').value, c = toCSV(t); if (!c) return toast('That dataset is empty.'); download(`dailywell_${t}_${today()}.csv`, c, 'text/csv;charset=utf-8'); },
+  'export-json': () => { const data = { app: 'DailyWell', exported_at: new Date().toISOString(), profile: { display_name: S.profile.display_name || null, time_zone: S.profile.time_zone || null }, settings: S.set, tables: {} }; TABLES.forEach(t => { data.tables[t] = rows(t).map(({ user_id, ...r }) => r); }); download(`dailywell_export_${today()}.json`, JSON.stringify(data, null, 2), 'application/json'); },
+  'sample-load': async () => { if (rows('routine_items').length + rows('workouts').length > 0 && !(await confirmBox('Add sample data alongside your existing entries? You can clear it later from Settings.', 'Add sample data', 'Load sample data'))) return; await loadSample(); toast('Sample data added.', 'ok'); render(); },
+  'sample-clear': async () => { if (!(await confirmBox('Remove all sample data? Your own entries are not touched.', 'Remove sample data'))) return; await DB.clearDemo(); toast('Sample data removed.', 'ok'); render(); },
+  'rem-done': async el => { const b = S.banners[+el.dataset.i]; if (!b) return; const [kind, id] = b.rk.split(':'); try { if (kind === 'p') await setLog('routine_log', 'item_id', id, today(), 'done'); else if (kind === 's') await setLog('supplement_logs', 'supplement_id', b.sid, today(), 'taken'); else if (kind === 'w') await DB.update('workouts', id, { status: 'done' }); } catch (e) { handleErr(e); } S.banners.splice(+el.dataset.i, 1); renderBanners(); render(); },
+  'rem-snooze': el => { const b = S.banners.splice(+el.dataset.i, 1)[0]; if (b) S.snooze[b.id] = { at: Date.now() + 600000, r: { key: b.rk, sid: b.sid, time: b.time, title: b.title } }; renderBanners(); toast('Snoozed for 10 minutes.'); },
+  'rem-dismiss': el => { S.banners.splice(+el.dataset.i, 1); renderBanners(); },
+  'notif-toggle': async () => {
+    if (S.set.browser_notifications) { await saveSettings({ browser_notifications: false }); toast('Browser notifications off.'); return render(); }
+    if (!('Notification' in window)) return toast('This browser does not support notifications. In-app banners still work.', 'err');
+    const p = Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
+    if (p !== 'granted') return toast('Permission was not granted. In-app banners still work.', 'err');
+    await saveSettings({ browser_notifications: true }); toast('Notifications on (while the app is open).', 'ok'); render();
+  },
+  theme: async () => { const cur = document.documentElement.dataset.theme; await saveSettings({ theme: cur === 'dark' ? 'light' : 'dark' }); applyTheme(); render(); },
+  logout: async () => { if (CLOUD) { await sb.auth.signOut(); } else { S.user = null; showLanding(); } },
+  'change-pw': () => openNewPassword(),
+  'delete-account': () => {
+    modal({ title: 'Delete my account', danger: true, submit: 'Delete everything', body: `<p>This permanently deletes ${CLOUD ? 'your account and ' : ''}all your DailyWell data. <strong>It cannot be undone.</strong> Consider downloading your data first.</p><div class="field"><label for="delc">Type DELETE to confirm</label><input id="delc" name="delc" type="text" autocomplete="off"></div>`,
+      onSubmit: async form => {
+        if (form.elements.delc.value.trim() !== 'DELETE') { setMsg(form, 'Please type DELETE exactly.', false); return false; }
+        if (CLOUD) { const { error } = await sb.rpc('delete_my_account'); if (error) throw error; try { await sb.auth.signOut({ scope: 'local' }); } catch (e) { /* account is gone */ } S.user = null; showLanding(); }
+        else { Object.keys(localStorage).filter(k => k.startsWith(LK)).forEach(k => localStorage.removeItem(k)); S.cache = {}; S.user = null; showLanding(); }
+        toast('Your data has been deleted.', 'ok');
+      } });
+  },
+  'local-demo': () => startLocal(),
+  'auth-open': el => openAuth(el.dataset.tab),
+  'auth-tab': el => authTab(el.closest('form'), el.dataset.tab)
+};
+document.addEventListener('click', e => { const el = e.target.closest('[data-act]'); if (!el || el.tagName === 'INPUT') return; const fn = ACT[el.dataset.act]; if (fn) { e.preventDefault(); Promise.resolve(fn(el, e)).catch(handleErr); } });
+document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('a[data-act][role=button]')) { e.preventDefault(); e.target.click(); } });
+document.addEventListener('change', e => {
+  const el = e.target;
+  if (el.matches('input[data-act=groc]')) return Promise.resolve(ACT.groc(el)).catch(handleErr);
+  if (el.id === 'datePick') { if (isDate(el.value)) { S.date = el.value; render(); } return; }
+  if (el.dataset.filter) return setFilter(el);
+  if (el.dataset.rep) { const v = el.value; if (el.dataset.rep === 'from' || el.dataset.rep === 'to') { if (!isDate(v)) return toast('Enter a valid date.', 'err'); S.rep[el.dataset.rep] = v; if (S.rep.from > S.rep.to) { const t = S.rep.from; S.rep.from = S.rep.to; S.rep.to = t; } if (dateRange(S.rep.from, S.rep.to).length >= 800) return toast('Please choose a range under about two years.', 'err'); } else S.rep[el.dataset.rep] = v; return render(); }
+  if (el.dataset.tmcfg) { const n = Number(el.value); if (Number.isFinite(n) && n >= 0) { TM.cfg[el.dataset.tmcfg] = Math.round(n); tmDraw(); } }
+});
+document.addEventListener('input', e => { const el = e.target; if (el.dataset.filter && el.type === 'text') setFilter(el); });
+function setFilter(el) {
+  const [a, b] = el.dataset.filter.split('.'), id = el.id, pos = el.selectionStart;
+  if (a === 'f') S.f[b] = el.value; else (S.f[a] || (S.f[a] = {}))[b] = el.value;
+  render(); if (id) { const n = document.getElementById(id); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) { /* ignore */ } } }
+}
+document.addEventListener('submit', async e => {
+  const f = e.target.closest('[data-form]'); if (!f) return; e.preventDefault();
+  try { await FORMS[f.dataset.form](f); } catch (err) { handleErr(err); }
+});
+const FORMS = {
+  async settings(form) {
+    const secs = SET_SECTIONS(), fields = secs.flatMap(s => s[1]), { out, errs } = readForm(form, fields); showErrs(form, errs);
+    if (Object.keys(errs).length) return toast('Please fix the highlighted fields.', 'err');
+    if (out.quiet_start && !out.quiet_end || !out.quiet_start && out.quiet_end) { return toast('Set both quiet-hours times, or leave both empty.', 'err'); }
+    if (out.calorie_target != null && out.calorie_target > 0 && out.calorie_target < calFloor()) { if (!(await confirmBox(`${num(out.calorie_target)} kcal per day is below commonly used minimums (${num(calFloor())} kcal). Please talk to a doctor or dietitian before eating this little. Save anyway?`, 'Save anyway', 'Very low calorie target'))) return; }
+    const prof = {}, set = {}; fields.forEach(f => { (f.src === 'profile' ? prof : set)[f.k] = out[f.k]; });
+    if (prof.time_zone == null) delete prof.time_zone; if (!prof.display_name) prof.display_name = null;
+    await saveSettings(set); await saveProfile(prof); applyTheme(); toast('Settings saved.', 'ok'); render();
+  },
+  async checkin(form) {
+    const fs = [{ k: 'mood', t: 'range', min: 1, max: 5 }, { k: 'energy', t: 'range', min: 1, max: 5 }, { k: 'stress', t: 'range', min: 1, max: 5 }, { k: 'note', t: 'textarea', max: 1000 }], { out, errs } = readForm(form, fs); showErrs(form, errs);
+    if (Object.keys(errs).length) return;
+    if (out.mood == null && out.energy == null && out.stress == null && !out.note) return toast('Fill in at least one field.', 'err');
+    const ex = rows('daily_checkins').find(c => c.checkin_date === S.date); if (ex) await DB.update('daily_checkins', ex.id, out); else await DB.insert('daily_checkins', { ...out, checkin_date: S.date });
+    toast('Check-in saved.', 'ok'); render();
+  },
+  async calc(form) {
+    const fs = [{ k: 'age', t: 'number', req: true, min: 18, max: 100, int: true }, { k: 'sex', t: 'select', req: true, opts: [{ v: 'female' }, { v: 'male' }] }, { k: 'height_cm', t: 'number', conv: 'length', req: true, min: 100, max: 250 }, { k: 'weight_kg', t: 'number', conv: 'weight', req: true, min: 30, max: 300 }, { k: 'activity', t: 'select', req: true, opts: ['sedentary', 'light', 'moderate', 'active', 'very_active'].map(v => ({ v })) }, { k: 'goal', t: 'select', req: true, opts: ['lose', 'maintain', 'gain', 'energy'].map(v => ({ v })) }], { out: o, errs } = readForm(form, fs); showErrs(form, errs);
+    if (Object.keys(errs).length) return;
+    const bmr = 10 * o.weight_kg + 6.25 * o.height_cm - 5 * o.age + (o.sex === 'male' ? 5 : -161), f = { sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725, very_active: 1.9 }[o.activity], tdee = bmr * f, mult = { lose: .85, maintain: 1, gain: 1.1, energy: 1 }[o.goal], floor = o.sex === 'female' ? 1200 : 1500;
+    let cal = Math.round(tdee * mult / 10) * 10, floored = false; if (cal < floor) { cal = floor; floored = true; }
+    const prot = Math.round(o.weight_kg * (o.goal === 'lose' || o.goal === 'gain' ? 1.6 : 1.2)), fat = Math.round(cal * .25 / 9), carbs = Math.max(0, Math.round((cal - prot * 4 - fat * 9) / 4));
+    $('#calcOut').innerHTML = `<div class="card" style="margin-top:1rem"><h3>Estimated daily targets</h3><p><strong>${num(cal)} kcal</strong> · Protein ${prot} g · Carbs ${carbs} g · Fat ${fat} g</p><p class="small muted">Estimated maintenance: about ${num(Math.round(tdee / 10) * 10)} kcal. ${floored ? 'The result was raised to a commonly used minimum; please do not eat below it without medical supervision.' : ''} Real needs vary — treat this as a starting point and adjust based on how you feel and your results.</p><button class="btn primary" data-act="calc-apply" data-cal="${cal}" data-p="${prot}" data-c="${carbs}" data-f="${fat}" data-age="${o.age}" data-sex="${o.sex}" data-h="${o.height_cm}" data-act2="${o.activity}" data-goal="${o.goal}">Use these as my targets</button></div>`;
+  }
+};
+ACT['calc-apply'] = async el => { const d = el.dataset; await saveSettings({ calorie_target: +d.cal, protein_target: +d.p, carbs_target: +d.c, fat_target: +d.f, age: +d.age, sex: d.sex, height_cm: +d.h, activity: d.act2, goal: d.goal }); toast('Targets updated.', 'ok'); render(); };
+
+/* ---------- sample data ---------- */
+async function loadSample() {
+  const d = today(), ins = (t, a) => DB.insertMany(t, a.map(r => ({ ...r, is_demo: true })));
+  await ins('routine_items', PLAN_TPL.Weekday.items.map(([t, title, category]) => ({ title, item_time: t, category, days: [1, 2, 3, 4, 5], active: true })));
+  const wk = await ins('workouts', [
+    { title: 'Push day', workout_date: addDays(d, -2), start_time: '17:30', duration_min: 55, type: 'strength', location: 'gym', muscle_groups: ['chest', 'shoulders', 'arms'], effort: 7, status: 'done' },
+    { title: 'Home HIIT', workout_date: addDays(d, -1), start_time: '18:00', duration_min: 20, type: 'hiit', location: 'home', muscle_groups: ['full body'], effort: 8, status: 'done' },
+    { title: 'Pull day', workout_date: d, start_time: '17:30', duration_min: 55, type: 'strength', location: 'gym', muscle_groups: ['back', 'arms'], status: 'planned' }]);
+  await ins('workout_exercises', [{ workout_id: wk[0].id, exercise_name: 'Bench press', sets: 4, reps: 8, weight_kg: 60, rest_sec: 90 }, { workout_id: wk[0].id, exercise_name: 'Overhead press', sets: 3, reps: 10, weight_kg: 30, rest_sec: 75 }, { workout_id: wk[1].id, exercise_name: 'Burpees', sets: 4, reps: 10, rest_sec: 30 }, { workout_id: wk[2].id, exercise_name: 'Barbell row', sets: 4, reps: 8, weight_kg: 50, rest_sec: 90 }]);
+  await ins('equipment', [{ name: 'Dumbbells', quantity: 2, weight_kg: 10, owned: true }, { name: 'Yoga mat', quantity: 1, owned: true }, { name: 'Resistance bands', quantity: 3, owned: true }]);
+  await ins('foods', [{ name: 'Greek yogurt', serving: '170 g', calories: 100, protein_g: 17, carbs_g: 6, fat_g: 0 }, { name: 'Banana', serving: '1 medium', calories: 105, protein_g: 1, carbs_g: 27, fat_g: 0 }]);
+  await ins('meals', [{ meal_date: d, meal_type: 'breakfast', meal_time: '07:15', food_name: 'Oats with banana', portion: '1 bowl', calories: 380, protein_g: 12, carbs_g: 68, fat_g: 7 }, { meal_date: addDays(d, -1), meal_type: 'lunch', meal_time: '12:30', food_name: 'Chicken, rice and vegetables', portion: '1 plate', calories: 620, protein_g: 45, carbs_g: 70, fat_g: 14 }, { meal_date: addDays(d, -1), meal_type: 'dinner', meal_time: '19:30', food_name: 'Lentil soup', portion: '1 bowl', calories: 420, protein_g: 24, carbs_g: 60, fat_g: 8 }]);
+  await ins('meal_plans', [{ weekday: 1, meal_type: 'breakfast', food_name: 'Oats with banana' }, { weekday: 1, meal_type: 'lunch', food_name: 'Chicken, rice and vegetables' }, { weekday: 2, meal_type: 'dinner', food_name: 'Lentil soup' }]);
+  await ins('water_logs', [...[0, 1, 2, 3, 4, 5].flatMap(i => [{ log_date: addDays(d, -i), log_time: '09:00', amount_ml: 500 }, { log_date: addDays(d, -i), log_time: '13:00', amount_ml: i % 2 ? 1000 : 750 }, { log_date: addDays(d, -i), log_time: '18:00', amount_ml: 1000 }])]);
+  const durs = [450, 420, 405, 470, 380, 440, 430], quals = [4, 3, 3, 5, 2, 4, 4];
+  await ins('sleep_logs', durs.map((m, i) => { const wake = new Date(`${addDays(d, -i)}T${i % 2 ? '06:45' : '06:30'}:00`), bed = new Date(wake.getTime() - m * 60000); return { sleep_date: addDays(d, -i), bed_at: bed.toISOString(), wake_at: wake.toISOString(), quality: quals[i], is_nap: false }; }));
+  await ins('recovery_sessions', [{ session_date: addDays(d, -9), type: 'massage', duration_min: 60, body_area: 'back and shoulders' }, { session_date: addDays(d, -3), type: 'foam rolling', duration_min: 15, body_area: 'legs' }]);
+  await ins('soreness_logs', [{ log_date: addDays(d, -1), body_area: 'quads', level: 5 }]);
+  const su = await ins('supplements', [{ name: 'Vitamin D', dose: 1, unit: 'tablet', times: ['08:00'], days: [0, 1, 2, 3, 4, 5, 6], active: true }]);
+  await ins('supplement_logs', [1, 2, 3].map(i => ({ supplement_id: su[0].id, log_date: addDays(d, -i), status: 'taken' })));
+  await ins('body_measurements', [0, 1, 2, 3, 4, 5].map(i => ({ measure_date: addDays(d, -i * 7), weight_kg: [80.5, 80.8, 81.0, 81.3, 81.6, 82.0][i], waist_cm: [84, 84.5, 85, 85, 85.5, 86][i] })));
+  const hb = await ins('habits', [{ name: 'Read 20 minutes', target_per_week: 5, active: true }, { name: 'No sugar', target_per_week: 7, active: true }, { name: '8,000 steps', target_per_week: 6, active: true }]);
+  await ins('habit_logs', [0, 1, 2, 4, 5].map(i => ({ habit_id: hb[0].id, log_date: addDays(d, -i) })).concat([1, 2, 3].map(i => ({ habit_id: hb[1].id, log_date: addDays(d, -i) })), [0, 1, 3].map(i => ({ habit_id: hb[2].id, log_date: addDays(d, -i) }))));
+  await ins('daily_checkins', [{ checkin_date: addDays(d, -1), mood: 4, energy: 3, stress: 2 }, { checkin_date: addDays(d, -2), mood: 3, energy: 3, stress: 3 }, { checkin_date: addDays(d, -3), mood: 4, energy: 4, stress: 2 }]);
+  await ins('reminders', [{ title: 'Massage', category: 'recovery', remind_time: '11:00', days: [0], active: true }]);
+}
+
+/* ---------- landing & auth ---------- */
+const LOGO = `<svg width="34" height="34" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#0f6e7a"/><path d="M8 34h13l6-14 10 28 7-14h12" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+function showLanding() {
+  S.started = false; stopEngine();
+  $('#app').innerHTML = `<div class="hero"><div class="top-bar" style="padding:0 0 2rem"><div class="brand" style="padding:0;color:#fff">${LOGO} DailyWell</div><div class="btns"><button class="btn" data-act="auth-open" data-tab="login">Log in</button></div></div>
+  <h1>Your whole health routine, in one calm place.</h1><p>Plan workouts, meals, water, sleep, recovery and habits — then see what is actually working. Works on your phone, tablet and computer.</p>
+  <div class="btns" style="justify-content:center"><button class="btn primary" data-act="auth-open" data-tab="signup">Sign up free</button><button class="btn" style="background:transparent;color:#fff" data-act="auth-open" data-tab="login">Log in</button></div>${CLOUD ? '' : '<p class="small" style="margin-top:1.2rem">Setup not finished — running in <strong>local demo mode</strong>. <a href="#" style="color:#fff" data-act="local-demo">Open the demo</a></p>'}</div>
+  <div class="land"><h2>Everything for a healthy day</h2><div class="grid">${[['🏋️', 'Gym & home workouts', 'Log sets, reps and weights, track personal records, use ready-made home routines and a built-in timer.'], ['🥗', 'Food & meal planning', 'Calorie and macro targets, meal plans, grocery lists and ideas that respect your diet.'], ['😴', 'Sleep & wake-up', 'Set bed and wake times, see sleep debt and consistency, get wind-down reminders.'], ['💧', 'Water', 'One-tap logging, daily goals and streaks.'], ['💆', 'Recovery & massage', 'Recurring massage and stretching reminders, soreness tracker and gentle ideas.'], ['💊', 'Supplements & habits', 'Reminders and checklists for what you take and the habits you are building.'], ['📈', 'Reports & insights', 'Charts, weekly summaries and CSV export — based only on what you log.'], ['⏰', 'Reminders', 'Banners and optional browser notifications with quiet hours.']].map(([i, t, d]) => `<div class="card"><div style="font-size:1.8rem" aria-hidden="true">${i}</div><h3>${t}</h3><p class="muted">${d}</p></div>`).join('')}</div>
+  <h2 style="margin-top:1.5rem">Privacy & security</h2><div class="card"><ul><li>Each account is private. The database enforces that you can only read and change your own records.</li><li>We never ask for bank details, card numbers or medical records, and we do not send your data to ad networks or AI services.</li><li>You can export all your data or delete your account at any time.</li><li>This website's source code is public (it is hosted on GitHub Pages), but your data is not.</li></ul><p class="small muted">${esc(DISCLAIMER)}</p></div></div>`;
+}
+function authBody(tab) {
+  const t = tab === 'signup', r = tab === 'reset';
+  return `<div class="tabs" role="group" aria-label="Account">${[['login', 'Log in'], ['signup', 'Sign up']].map(([k, l]) => `<button type="button" class="btn sm" data-act="auth-tab" data-tab="${k}" aria-pressed="${tab === k}">${l}</button>`).join('')}</div>
+  ${t ? `<div class="field"><label for="a_name">Display name (optional)</label><input id="a_name" name="name" type="text" maxlength="80" autocomplete="nickname"></div>` : ''}
+  <div class="field"><label for="a_email">Email</label><input id="a_email" name="email" type="email" autocomplete="email" required></div>
+  ${r ? '' : `<div class="field"><label for="a_pw">Password${t ? ' (at least 8 characters)' : ''}</label><input id="a_pw" name="password" type="password" autocomplete="${t ? 'new-password' : 'current-password'}" required></div>`}
+  ${t ? `<div class="field"><label for="a_pw2">Repeat password</label><input id="a_pw2" name="password2" type="password" autocomplete="new-password"></div><p class="small muted">${esc(DISCLAIMER)}</p>` : ''}
+  ${tab === 'login' ? `<p><a href="#" data-act="auth-tab" data-tab="reset">Forgot your password?</a></p>` : ''}${r ? `<p class="small muted">Enter your email and we will send a reset link.</p>` : ''}`;
+}
+function authTab(form, tab) { form.dataset.tab = tab; form.querySelector('.mb').innerHTML = authBody(tab); form.querySelector('[type=submit]').textContent = { login: 'Log in', signup: 'Create account', reset: 'Send reset link' }[tab]; form.querySelector('.mh h2').textContent = { login: 'Log in', signup: 'Create your account', reset: 'Reset password' }[tab]; }
+function openAuth(tab = 'login') {
+  if (!CLOUD) { modal({ title: 'Local demo mode', body: `<p>The online account system is not configured yet, so DailyWell is running in <strong>local demo mode</strong>.</p><p>Your entries are saved only in this browser on this device — they are <strong>not</strong> synced or password-protected. To enable sign-up and log-in, follow the README to connect Supabase.</p>`, submit: 'Open local demo', onSubmit: () => { startLocal(); } }); return; }
+  const m = modal({ title: tab === 'signup' ? 'Create your account' : 'Log in', body: authBody(tab), submit: tab === 'signup' ? 'Create account' : 'Log in', onSubmit: authSubmit });
+  m.form.dataset.tab = tab;
+}
+async function authSubmit(form) {
+  const tab = form.dataset.tab, email = form.elements.email.value.trim(), pw = form.elements.password ? form.elements.password.value : '';
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setMsg(form, 'Please enter a valid email address.', false); return false; }
+  const redirect = location.origin + location.pathname;
+  if (tab === 'reset') { await sb.auth.resetPasswordForEmail(email, { redirectTo: redirect }); setMsg(form, 'If that email has an account, a reset link is on its way. Check your inbox.', true); return false; }
+  if (!pw) { setMsg(form, 'Please enter your password.', false); return false; }
+  if (tab === 'signup') {
+    if (pw.length < 8) { setMsg(form, 'Use at least 8 characters for your password.', false); return false; }
+    if (pw !== form.elements.password2.value) { setMsg(form, 'The two passwords do not match.', false); return false; }
+    const { data, error } = await sb.auth.signUp({ email, password: pw, options: { emailRedirectTo: redirect, data: { display_name: (form.elements.name.value || '').trim().slice(0, 80) } } });
+    if (error) { setMsg(form, /rate|limit/i.test(error.message) ? 'Too many attempts. Please wait a few minutes and try again.' : 'We could not create that account. Check the details and try again.', false); return false; }
+    if (data.session) return true;
+    setMsg(form, 'Almost there! If this email can be used, we sent a confirmation link. Open it, then log in.', true); return false;
+  }
+  const { error } = await sb.auth.signInWithPassword({ email, password: pw });
+  if (error) { setMsg(form, /rate|limit/i.test(error.message) ? 'Too many attempts. Please wait a few minutes and try again.' : 'Email or password is incorrect, or the email is not confirmed yet.', false); return false; }
+  return true;
+}
+function openNewPassword() {
+  modal({ title: 'Choose a new password', submit: 'Update password', body: `<div class="field"><label for="np1">New password (at least 8 characters)</label><input id="np1" name="p1" type="password" autocomplete="new-password"></div><div class="field"><label for="np2">Repeat new password</label><input id="np2" name="p2" type="password" autocomplete="new-password"></div>`,
+    onSubmit: async form => { const a = form.elements.p1.value; if (a.length < 8) { setMsg(form, 'Use at least 8 characters.', false); return false; } if (a !== form.elements.p2.value) { setMsg(form, 'The passwords do not match.', false); return false; } const { error } = await sb.auth.updateUser({ password: a }); if (error) { setMsg(form, 'Could not update the password. Try again, or request a new reset link.', false); return false; } S.recovery = false; toast('Password updated.', 'ok'); } });
+}
+async function startLocal() { S.user = { id: 'local', email: 'local demo' }; document.querySelectorAll('.overlay').forEach(o => o.remove()); await startApp(); }
+
+/* ---------- shell, render, startup ---------- */
+function applyTheme() {
+  const t = S.set.theme || 'auto', dark = t === 'dark' || (t === 'auto' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+}
+function shell() {
+  $('#app').innerHTML = `<div class="shell"><aside class="side" aria-label="Main navigation"><div class="brand">${LOGO} DailyWell</div><nav class="nav" aria-label="Pages">${NAV.map(([k, l, i]) => `<a role="link" tabindex="0" data-act="nav" data-page="${k}" data-nav="${k}"><span aria-hidden="true">${i}</span> ${esc(l)}</a>`).join('')}</nav><div style="flex:1"></div><button class="btn sm" data-act="theme">◐ Light / dark</button></aside>
+  <main id="main"><div id="banners" aria-live="assertive"></div>${CLOUD ? '' : '<div class="notice warn" role="status"><strong>Local demo mode:</strong> data stays only in this browser and is not protected by an account.</div>'}<div id="page"></div></main></div>
+  <nav class="bottom" aria-label="Pages">${BOTTOM.map(k => { const n = NAV.find(x => x[0] === k); return `<a role="link" tabindex="0" data-act="nav" data-page="${k}" data-nav="${k}"><span aria-hidden="true">${n[2]}</span>${esc(n[1].replace("Today's ", ''))}</a>`; }).join('')}<a role="button" tabindex="0" data-act="more" data-nav="more"><span aria-hidden="true">☰</span>More</a></nav>`;
+  renderBanners();
+}
+function render() {
+  const el = $('#page'); if (!el) return;
+  S.after = [];
+  try { el.innerHTML = PAGES[S.page](); }
+  catch (e) { console.error('DailyWell render error:', e && e.name); el.innerHTML = card('', empty('⚠️', 'Something went wrong showing this page.', '<button class="btn" data-act="nav" data-page="dashboard">Back to dashboard</button>')); }
+  document.querySelectorAll('[data-nav]').forEach(a => { if (a.dataset.nav === S.page) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+  S.after.forEach(f => { try { f(); } catch (e) { console.error('DailyWell chart error:', e && e.name); } });
+  tmDraw();
+}
+function onboarding() {
+  const fs = [{ k: 'goal', l: 'What is your main goal?', t: 'select', req: true, opts: [{ v: 'lose', l: 'Gradual fat loss' }, { v: 'maintain', l: 'Maintain' }, { v: 'gain', l: 'Gradual muscle gain' }, { v: 'energy', l: 'Energy / general health' }] }, { k: 'units_weight', l: 'Weight units', t: 'select', req: true, opts: [{ v: 'kg', l: 'Kilograms' }, { v: 'lb', l: 'Pounds' }] }, { k: 'bed_time', l: 'Usual bedtime', t: 'time', req: true }, { k: 'wake_time', l: 'Usual wake-up time', t: 'time', req: true }, { k: 'workouts_per_week_goal', l: 'Workouts per week', t: 'number', req: true, min: 0, max: 14, int: true }, { k: 'calorie_target', l: 'Daily calories (optional — you can use the calculator later)', t: 'number', min: 0, max: 10000, int: true }];
+  let saved = false;
+  modal({ title: 'Welcome to DailyWell 👋', submit: 'Save and start', cancel: 'Skip for now', wide: true, body: `<p class="muted">A few quick questions to set things up. You can change everything later in Settings.</p>${fs.map(f => fld(f, f.k === 'bed_time' || f.k === 'wake_time' ? T(S.set[f.k]) : S.set[f.k])).join('')}<div class="field chk"><label><input type="checkbox" name="sample"> Also add sample data so I can explore (removable in Settings)</label></div>`,
+    onSubmit: async form => { const { out, errs } = readForm(form, fs); showErrs(form, errs); if (Object.keys(errs).length) return false; out.onboarded = true; if (out.calorie_target == null) delete out.calorie_target; await saveSettings(out); saved = true; if (form.elements.sample.checked) await loadSample(); applyTheme(); render(); },
+    onClose: () => { if (!saved) saveSettings({ onboarded: true }).catch(() => {}); } });
+}
+async function startApp() {
+  $('#app').innerHTML = '<div class="loading">Loading your data…</div>';
+  try { await loadSettings(); await DB.loadAll(); }
+  catch (e) { console.error('DailyWell load error:', (e && (e.code || e.name)) || 'unknown'); $('#app').innerHTML = `<div class="land"><div class="card"><h2>We could not load your data</h2><p>${esc(friendly(e))}</p><div class="btns"><button class="btn primary" onclick="location.reload()">Try again</button><button class="btn" data-act="logout">Log out</button></div></div></div>`; return; }
+  S.started = true; S.date = today(); S.page = 'dashboard'; S.fired = new Set(); applyTheme(); shell(); render(); startEngine();
+  if (!S.set.onboarded) onboarding();
+}
+function setupManifest() {
+  try {
+    const icon = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#0f6e7a"/><path d="M8 34h13l6-14 10 28 7-14h12" fill="none" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+    const mf = { name: 'DailyWell', short_name: 'DailyWell', start_url: location.origin + location.pathname, display: 'standalone', background_color: '#ffffff', theme_color: '#0f6e7a', icons: [{ src: icon, sizes: 'any', type: 'image/svg+xml' }] };
+    const l = document.createElement('link'); l.rel = 'manifest'; l.href = 'data:application/manifest+json,' + encodeURIComponent(JSON.stringify(mf)); document.head.appendChild(l);
+  } catch (e) { /* optional */ }
+}
+function init() {
+  applyTheme(); setupManifest();
+  window.addEventListener('offline', () => toast('You are offline. Changes cannot be saved until you reconnect.', 'err'));
+  window.addEventListener('online', () => toast('Back online.', 'ok'));
+  if (window.matchMedia) { try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { applyTheme(); }); } catch (e) { /* old browser */ } }
+  if (!CLOUD) { showLanding(); return; }
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { flowType: 'pkce', persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+  sb.auth.onAuthStateChange((ev, session) => {
+    setTimeout(async () => {
+      if (ev === 'PASSWORD_RECOVERY') { S.recovery = true; if (session) S.user = session.user; openNewPassword(); }
+      else if (ev === 'SIGNED_OUT') { S.user = null; S.cache = {}; showLanding(); }
+      else if ((ev === 'INITIAL_SESSION' || ev === 'SIGNED_IN') && session) { if (S.started && S.user && S.user.id === session.user.id) return; S.user = session.user; await startApp(); }
+      else if (ev === 'INITIAL_SESSION') showLanding();
+      if (location.search || location.hash) history.replaceState(null, '', location.pathname); // keep codes/tokens out of the address bar
+    }, 0);
+  });
+}
+init();
+</script>
+</body>
+</html>

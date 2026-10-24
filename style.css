@@ -1524,3 +1524,6 @@ body:has(button:hover) .cursor-ring {
   .hero-cta { flex-direction: column; }
   .btn { width: 100%; justify-content: center; }
 }
+
+/* prevent the off-canvas mobile menu from causing sideways scroll */
+html, body { overflow-x: hidden; }
