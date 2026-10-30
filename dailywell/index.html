@@ -6,7 +6,7 @@
 <title>DailyWell — Daily Health Routine Tracker</title>
 <meta name="description" content="DailyWell helps you plan and track workouts, meals, water, sleep, recovery, supplements and healthy habits — privately, on any device.">
 <meta name="theme-color" content="#0f6e7a">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; manifest-src data:; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; manifest-src data:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f6e7a'/%3E%3Cpath d='M8 34h13l6-14 10 28 7-14h12' fill='none' stroke='white' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <style>
 :root{--bg:#f4f7f9;--card:#fff;--text:#12202f;--muted:#5a6b7b;--border:#dbe3ea;--primary:#0f6e7a;--primary-d:#0a525b;--primary-t:#e3f2f4;--accent:#15803d;--accent-t:#e3f6ea;--warn:#b45309;--warn-t:#fdf0dc;--danger:#b91c1c;--danger-t:#fde8e8;--shadow:0 1px 3px rgba(16,32,48,.08),0 4px 14px rgba(16,32,48,.05);--r:14px}
@@ -115,6 +115,16 @@ table.tbl{width:100%;border-collapse:collapse;font-size:.92rem}.tbl th,.tbl td{p
  .bottom a span{display:block;font-size:1.3rem}.bottom a[aria-current=page]{color:var(--primary);font-weight:700}
  .row2{grid-template-columns:1fr}.hero h1{font-size:1.8rem}
 }
+/* native app polish: notches, home indicator, touch behaviour */
+*{-webkit-tap-highlight-color:transparent}
+button,a,select,input,textarea,label{touch-action:manipulation}
+body{overscroll-behavior-y:none;padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+.hero{padding-top:calc(3.5rem + env(safe-area-inset-top))}
+.overlay{padding-top:max(4vh,env(safe-area-inset-top));padding-bottom:max(4vh,env(safe-area-inset-bottom))}
+#toasts{bottom:calc(84px + env(safe-area-inset-bottom))}
+.side{padding-top:calc(1rem + env(safe-area-inset-top))}
+@media (max-width:860px){main{padding-top:calc(.8rem + env(safe-area-inset-top))}}
+@media (max-width:600px){.grid:not(.two){grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem}.stat .v{font-size:1.3rem}.card{padding:.85rem .9rem}.ring{width:110px;height:110px}.ring>div{width:84px;height:84px}}
 @media print{.side,.bottom,.top .btns,.btn,#banners,.filters,.datenav,.no-print{display:none!important}.shell{display:block}.card{box-shadow:none;break-inside:avoid}body{background:#fff;color:#000}}
 </style>
 </head>
@@ -123,8 +133,9 @@ table.tbl{width:100%;border-collapse:collapse;font-size:.92rem}.tbl th,.tbl td{p
 <div id="app"><div class="loading">Loading DailyWell…</div></div>
 <div id="toasts" aria-live="polite"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="config.js"></script>
+<script src="vendor/supabase.js"></script>
+<script src="vendor/chart.umd.js"></script>
 <script>
 'use strict';
 /* =====================================================================
@@ -133,8 +144,11 @@ table.tbl{width:100%;border-collapse:collapse;font-size:.92rem}.tbl th,.tbl td{p
    These two values are public by design. NEVER paste a service_role key here.
    Leave the placeholders to run in Local Demo mode (data stays in this browser only).
    ===================================================================== */
-const SUPABASE_URL = 'YOUR_SUPABASE_URL';            // e.g. https://abcdefgh.supabase.co
-const SUPABASE_KEY = 'YOUR_SUPABASE_PUBLISHABLE_KEY'; // publishable key (sb_publishable_...) or legacy anon key
+const CFG = window.DAILYWELL_CONFIG || {};            // values live in config.js
+const SUPABASE_URL = CFG.SUPABASE_URL || 'YOUR_SUPABASE_URL';
+const SUPABASE_KEY = CFG.SUPABASE_KEY || 'YOUR_SUPABASE_PUBLISHABLE_KEY';
+const WEB_URL = CFG.WEB_URL || '';
+const NATIVE = !!(window.Capacitor && typeof Capacitor.isNativePlatform === 'function' && Capacitor.isNativePlatform());
 
 const CLOUD = typeof window.supabase !== 'undefined' && /^https:\/\//.test(SUPABASE_URL) && !SUPABASE_URL.includes('YOUR_') && !SUPABASE_KEY.includes('YOUR_');
 const LK = 'dw_local_v1_';
@@ -213,6 +227,54 @@ function handleErr(e) {
 }
 const userErr = m => Object.assign(new Error(m), { user: true });
 
+/* ---------- native (iOS / Android) helpers; every function is a safe no-op on the web ---------- */
+const Native = {
+  on: NATIVE,
+  P: n => (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins[n]) || null,
+  haptic(style) { if (!NATIVE) return; try { const H = Native.P('Haptics'); if (H) H.impact({ style: style || 'LIGHT' }); } catch (e) { /* ignore */ } },
+  async permission(ask) {
+    const L = Native.P('LocalNotifications'); if (!L) return 'denied';
+    let r = await L.checkPermissions();
+    if (r.display !== 'granted' && ask) r = await L.requestPermissions();
+    return r.display;
+  },
+  schedule() { if (!NATIVE) return; clearTimeout(Native._t); Native._t = setTimeout(() => Native.sync().catch(() => {}), 700); },
+  /* Rebuild the operating-system reminders: next 7 days, at most 60 (iOS allows 64 pending). */
+  async sync() {
+    const L = Native.P('LocalNotifications'); if (!L || !S.started) return;
+    const pend = await L.getPending();
+    if (pend.notifications && pend.notifications.length) await L.cancel({ notifications: pend.notifications.map(n => ({ id: n.id })) });
+    if (!S.set.browser_notifications || (await Native.permission(false)) !== 'granted') return;
+    const out = [], now = Date.now();
+    for (let i = 0; i < 7; i++) {
+      const d = addDays(today(), i);
+      todayReminders(d).forEach(r => {
+        if (inQuiet(r.time)) return;
+        const at = new Date(`${d}T${r.time}:00`); if (at.getTime() <= now + 5000) return;
+        out.push({ at, body: r.title });
+      });
+    }
+    out.sort((a, b) => a.at - b.at);
+    const list = out.slice(0, 60).map((o, i) => ({ id: i + 1, title: 'DailyWell', body: o.body, schedule: { at: o.at, allowWhileIdle: true }, channelId: 'reminders' }));
+    try { await L.createChannel({ id: 'reminders', name: 'Reminders', description: 'Workout, meal, water, sleep and medicine reminders', importance: 4 }); } catch (e) { /* iOS has no channels */ }
+    if (list.length) await L.schedule({ notifications: list });
+    Native.count = list.length;
+  },
+  async clear() { try { const L = Native.P('LocalNotifications'); if (!L) return; const p = await L.getPending(); if (p.notifications && p.notifications.length) await L.cancel({ notifications: p.notifications.map(n => ({ id: n.id })) }); } catch (e) { /* ignore */ } },
+  theme(dark) { try { const SB = Native.P('StatusBar'); if (!SB) return; SB.setStyle({ style: dark ? 'DARK' : 'LIGHT' }); SB.setBackgroundColor({ color: dark ? '#0d151c' : '#f4f7f9' }); } catch (e) { /* ignore */ } },
+  init() {
+    if (!NATIVE) return;
+    const A = Native.P('App'); if (!A) return;
+    A.addListener('appStateChange', s => { if (s.isActive) Native.schedule(); });
+    A.addListener('backButton', () => {
+      const ov = [...document.querySelectorAll('.overlay')].pop();
+      if (ov) { const c = ov.querySelector('[data-close]'); if (c) c.click(); else ov.remove(); }
+      else if (S.started && S.page !== 'dashboard') { S.page = 'dashboard'; render(); }
+      else A.exitApp();
+    });
+  }
+};
+
 /* ---------- data layer (Supabase, or localStorage in demo mode) ---------- */
 const DB = {
   async loadAll() { await Promise.all(TABLES.map(async t => { S.cache[t] = await DB.fetch(t); })); },
@@ -232,18 +294,18 @@ const DB = {
     let out;
     if (CLOUD) { const { data, error } = await sb.from(t).insert(arr).select(); if (error) throw error; out = data; }
     else { const now = new Date().toISOString(); out = arr.map(r => ({ id: uuid(), user_id: 'local', is_demo: false, created_at: now, updated_at: now, ...r })); }
-    S.cache[t] = rows(t).concat(out); DB.persist(t); return out;
+    S.cache[t] = rows(t).concat(out); DB.persist(t); Native.schedule(); return out;
   },
   async insert(t, row) { return (await DB.insertMany(t, [row]))[0]; },
   async update(t, id, patch) {
     let r;
     if (CLOUD) { const { data, error } = await sb.from(t).update(patch).eq('id', id).select().single(); if (error) throw error; r = data; }
     else { const old = rows(t).find(x => x.id === id); r = { ...old, ...patch, updated_at: new Date().toISOString() }; }
-    S.cache[t] = rows(t).map(x => (x.id === id ? r : x)); DB.persist(t); return r;
+    S.cache[t] = rows(t).map(x => (x.id === id ? r : x)); DB.persist(t); Native.schedule(); return r;
   },
   async remove(t, id) {
     if (CLOUD) { const { error } = await sb.from(t).delete().eq('id', id); if (error) throw error; }
-    S.cache[t] = rows(t).filter(x => x.id !== id); DB.persist(t);
+    S.cache[t] = rows(t).filter(x => x.id !== id); DB.persist(t); Native.schedule();
     (CASCADE[t] || []).forEach(([ct, col]) => { S.cache[ct] = rows(ct).filter(x => x[col] !== id); DB.persist(ct); });
   },
   async clearDemo() {
@@ -268,6 +330,7 @@ async function saveSettings(patch) {
   if (CLOUD) { const { error } = await sb.from('user_settings').upsert({ user_id: S.user.id, ...patch }, { onConflict: 'user_id' }); if (error) throw error; }
   S.set = { ...S.set, ...patch };
   if (!CLOUD) localStorage.setItem(LK + 'settings', JSON.stringify(S.set));
+  Native.schedule();
 }
 async function saveProfile(patch) {
   if (CLOUD) { const { error } = await sb.from('profiles').upsert({ id: S.user.id, ...patch }, { onConflict: 'id' }); if (error) throw error; }
@@ -901,7 +964,7 @@ PAGES.reminders = () => {
   const l = rows('reminders').slice().sort((a, b) => T(a.remind_time).localeCompare(T(b.remind_time))), auto = S.set.auto_reminders ? todayReminders().filter(r => !r.key.startsWith('r:')) : [];
   const perm = 'Notification' in window ? Notification.permission : 'unsupported';
   return `<div class="top"><h1>Reminders</h1><div class="btns">${addBtn('reminders', 'New reminder')}</div></div>
-  <div class="notice"><strong>How reminders work:</strong> DailyWell shows a banner (and, if you allow it, a browser notification) at the right time <em>while the app is open in a tab or window</em>. On a static website, reliable background push when the app is closed is not possible without extra server setup. Quiet hours: ${S.set.quiet_start && S.set.quiet_end ? esc(fmtT(S.set.quiet_start)) + ' – ' + esc(fmtT(S.set.quiet_end)) : 'off'} (change in Settings). Browser notifications: ${S.set.browser_notifications && perm === 'granted' ? 'on' : 'off'}. <button class="btn sm" data-act="notif-toggle">${S.set.browser_notifications ? 'Turn off notifications' : 'Turn on notifications'}</button></div>
+  <div class="notice"><strong>How reminders work:</strong> ${NATIVE ? 'DailyWell schedules your reminders on this phone, so they arrive even when the app is closed (the next 7 days are scheduled each time you open the app). Quiet hours are respected.' : 'DailyWell shows a banner (and, if you allow it, a browser notification) at the right time <em>while the app is open in a tab or window</em>. On a static website, reliable background push when the app is closed is not possible without extra server setup.'} Quiet hours: ${S.set.quiet_start && S.set.quiet_end ? esc(fmtT(S.set.quiet_start)) + ' – ' + esc(fmtT(S.set.quiet_end)) : 'off'} (change in Settings). Notifications: ${S.set.browser_notifications && (NATIVE || perm === 'granted') ? 'on' : 'off'}. <button class="btn sm" data-act="notif-toggle">${S.set.browser_notifications ? 'Turn off notifications' : 'Turn on notifications'}</button></div>
   ${card('My reminders', l.length ? `<ul class="clean">${l.map(r => `<li class="row"><div class="t">${esc(fmtT(r.remind_time))}</div><div class="grow"><strong>${esc(r.title)}</strong> <span class="badge">${esc(r.category)}</span>${r.active ? '' : ' <span class="badge bad">paused</span>'}<div class="small muted">${(r.days || []).slice().sort().map(x => WD[x]).join(' · ')}</div></div><div class="btns">${rowBtns('reminders', r.id)}</div></li>`).join('')}</ul>` : empty('⏰', 'No custom reminders yet. Examples: massage on Sundays, take vitamins at 8:00.', addBtn('reminders', 'New reminder')))}
   ${card('Automatic reminders today', S.set.auto_reminders ? (auto.length ? `<ul class="clean">${auto.map(r => `<li class="row"><div class="t">${esc(fmtT(r.time))}</div><div class="grow">${esc(r.title)}</div></li>`).join('')}</ul>` : '<p class="muted">None today.</p>') : '<p class="muted">Automatic reminders are off (Settings).</p>')}`;
 };
@@ -984,7 +1047,7 @@ PAGES.settings = () => {
   <div style="height:1rem"></div>
   ${card('Your data', `<div class="btns"><button class="btn" data-act="export-json">Download everything (JSON)</button><button class="btn" data-act="nav" data-page="reports">Export CSV…</button><button class="btn" data-act="sample-load">Load sample data</button><button class="btn" data-act="sample-clear">Clear sample data</button></div><p class="small muted">Sample data is marked so it can be removed without touching your own entries.</p>`)}
   ${card('Account', `<p>${CLOUD ? `Signed in as <strong>${esc(S.user.email)}</strong>.` : '<strong>Local demo mode:</strong> your data is stored only in this browser on this device. It is not synced and is not protected by an account.'}</p><div class="btns">${CLOUD ? '<button class="btn" data-act="change-pw">Change password</button>' : ''}<button class="btn" data-act="logout">${CLOUD ? 'Log out' : 'Leave demo'}</button><button class="btn danger" data-act="delete-account">Delete my account and data</button></div>`)}
-  ${card('Privacy & health notice', `<p>${esc(DISCLAIMER)}</p><p class="small muted">Your entries are stored in your private account database and protected by row-level security so only you can read them. DailyWell does not send your health data to AI services, advertisers or analytics tools. This website's code is public, but your data is not.</p>`)}`;
+  ${card('Privacy & health notice', `<p>${esc(DISCLAIMER)}</p><p>${CFG.PRIVACY_URL ? `<a href="${esc(CFG.PRIVACY_URL)}" target="_blank" rel="noopener noreferrer">Privacy policy</a>` : ''}${CFG.SUPPORT_URL ? ` · <a href="${esc(CFG.SUPPORT_URL)}" target="_blank" rel="noopener noreferrer">Support &amp; contact</a>` : ''}</p><p class="small muted">Your entries are stored in your private account database and protected by row-level security so only you can read them. DailyWell does not send your health data to AI services, advertisers or analytics tools. This website's code is public, but your data is not.</p>`)}`;
 };
 
 /* ---------- actions ---------- */
@@ -1063,7 +1126,12 @@ const ACT = {
   'rem-snooze': el => { const b = S.banners.splice(+el.dataset.i, 1)[0]; if (b) S.snooze[b.id] = { at: Date.now() + 600000, r: { key: b.rk, sid: b.sid, time: b.time, title: b.title } }; renderBanners(); toast('Snoozed for 10 minutes.'); },
   'rem-dismiss': el => { S.banners.splice(+el.dataset.i, 1); renderBanners(); },
   'notif-toggle': async () => {
-    if (S.set.browser_notifications) { await saveSettings({ browser_notifications: false }); toast('Browser notifications off.'); return render(); }
+    if (S.set.browser_notifications) { await saveSettings({ browser_notifications: false }); toast('Notifications off.'); return render(); }
+    if (NATIVE) {
+      const p = await Native.permission(true);
+      if (p !== 'granted') return toast('Notifications are blocked. Turn them on for DailyWell in your phone Settings.', 'err');
+      await saveSettings({ browser_notifications: true }); toast('Reminders on. They arrive even when the app is closed.', 'ok'); return render();
+    }
     if (!('Notification' in window)) return toast('This browser does not support notifications. In-app banners still work.', 'err');
     const p = Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
     if (p !== 'granted') return toast('Permission was not granted. In-app banners still work.', 'err');
@@ -1085,7 +1153,8 @@ const ACT = {
   'auth-open': el => openAuth(el.dataset.tab),
   'auth-tab': el => authTab(el.closest('form'), el.dataset.tab)
 };
-document.addEventListener('click', e => { const el = e.target.closest('[data-act]'); if (!el || el.tagName === 'INPUT') return; const fn = ACT[el.dataset.act]; if (fn) { e.preventDefault(); Promise.resolve(fn(el, e)).catch(handleErr); } });
+const HAPTIC_ACTS = new Set(['tgl', 'plan-set', 'supp-set', 'habit-tgl', 'water-add', 'rem-done']);
+document.addEventListener('click', e => { const el = e.target.closest('[data-act]'); if (!el || el.tagName === 'INPUT') return; const fn = ACT[el.dataset.act]; if (fn) { if (HAPTIC_ACTS.has(el.dataset.act)) Native.haptic('LIGHT'); e.preventDefault(); Promise.resolve(fn(el, e)).catch(handleErr); } });
 document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('a[data-act][role=button]')) { e.preventDefault(); e.target.click(); } });
 document.addEventListener('change', e => {
   const el = e.target;
@@ -1163,12 +1232,12 @@ async function loadSample() {
 /* ---------- landing & auth ---------- */
 const LOGO = `<svg width="34" height="34" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#0f6e7a"/><path d="M8 34h13l6-14 10 28 7-14h12" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 function showLanding() {
-  S.started = false; stopEngine();
+  S.started = false; stopEngine(); Native.clear();
   $('#app').innerHTML = `<div class="hero"><div class="top-bar" style="padding:0 0 2rem"><div class="brand" style="padding:0;color:#fff">${LOGO} DailyWell</div><div class="btns"><button class="btn" data-act="auth-open" data-tab="login">Log in</button></div></div>
   <h1>Your whole health routine, in one calm place.</h1><p>Plan workouts, meals, water, sleep, recovery and habits — then see what is actually working. Works on your phone, tablet and computer.</p>
   <div class="btns" style="justify-content:center"><button class="btn primary" data-act="auth-open" data-tab="signup">Sign up free</button><button class="btn" style="background:transparent;color:#fff" data-act="auth-open" data-tab="login">Log in</button></div>${CLOUD ? '' : '<p class="small" style="margin-top:1.2rem">Setup not finished — running in <strong>local demo mode</strong>. <a href="#" style="color:#fff" data-act="local-demo">Open the demo</a></p>'}</div>
   <div class="land"><h2>Everything for a healthy day</h2><div class="grid">${[['🏋️', 'Gym & home workouts', 'Log sets, reps and weights, track personal records, use ready-made home routines and a built-in timer.'], ['🥗', 'Food & meal planning', 'Calorie and macro targets, meal plans, grocery lists and ideas that respect your diet.'], ['😴', 'Sleep & wake-up', 'Set bed and wake times, see sleep debt and consistency, get wind-down reminders.'], ['💧', 'Water', 'One-tap logging, daily goals and streaks.'], ['💆', 'Recovery & massage', 'Recurring massage and stretching reminders, soreness tracker and gentle ideas.'], ['💊', 'Supplements & habits', 'Reminders and checklists for what you take and the habits you are building.'], ['📈', 'Reports & insights', 'Charts, weekly summaries and CSV export — based only on what you log.'], ['⏰', 'Reminders', 'Banners and optional browser notifications with quiet hours.']].map(([i, t, d]) => `<div class="card"><div style="font-size:1.8rem" aria-hidden="true">${i}</div><h3>${t}</h3><p class="muted">${d}</p></div>`).join('')}</div>
-  <h2 style="margin-top:1.5rem">Privacy & security</h2><div class="card"><ul><li>Each account is private. The database enforces that you can only read and change your own records.</li><li>We never ask for bank details, card numbers or medical records, and we do not send your data to ad networks or AI services.</li><li>You can export all your data or delete your account at any time.</li><li>This website's source code is public (it is hosted on GitHub Pages), but your data is not.</li></ul><p class="small muted">${esc(DISCLAIMER)}</p></div></div>`;
+  <h2 style="margin-top:1.5rem">Privacy & security</h2><div class="card"><ul><li>Each account is private. The database enforces that you can only read and change your own records.</li><li>We never ask for bank details, card numbers or medical records, and we do not send your data to ad networks or AI services.</li><li>You can export all your data or delete your account at any time.</li><li>This website's source code is public (it is hosted on GitHub Pages), but your data is not.</li></ul><p class="small muted">${esc(DISCLAIMER)}</p><p class="small">${CFG.PRIVACY_URL ? `<a href="${esc(CFG.PRIVACY_URL)}" target="_blank" rel="noopener noreferrer">Privacy policy</a>` : ''}${CFG.SUPPORT_URL ? ` · <a href="${esc(CFG.SUPPORT_URL)}" target="_blank" rel="noopener noreferrer">Support &amp; contact</a>` : ''}</p></div></div>`;
 }
 function authBody(tab) {
   const t = tab === 'signup', r = tab === 'reset';
@@ -1188,7 +1257,7 @@ function openAuth(tab = 'login') {
 async function authSubmit(form) {
   const tab = form.dataset.tab, email = form.elements.email.value.trim(), pw = form.elements.password ? form.elements.password.value : '';
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setMsg(form, 'Please enter a valid email address.', false); return false; }
-  const redirect = location.origin + location.pathname;
+  const redirect = (NATIVE && WEB_URL) ? WEB_URL : location.origin + location.pathname;
   if (tab === 'reset') { await sb.auth.resetPasswordForEmail(email, { redirectTo: redirect }); setMsg(form, 'If that email has an account, a reset link is on its way. Check your inbox.', true); return false; }
   if (!pw) { setMsg(form, 'Please enter your password.', false); return false; }
   if (tab === 'signup') {
@@ -1213,6 +1282,7 @@ async function startLocal() { S.user = { id: 'local', email: 'local demo' }; doc
 function applyTheme() {
   const t = S.set.theme || 'auto', dark = t === 'dark' || (t === 'auto' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
   document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  Native.theme(dark);
 }
 function shell() {
   $('#app').innerHTML = `<div class="shell"><aside class="side" aria-label="Main navigation"><div class="brand">${LOGO} DailyWell</div><nav class="nav" aria-label="Pages">${NAV.map(([k, l, i]) => `<a role="link" tabindex="0" data-act="nav" data-page="${k}" data-nav="${k}"><span aria-hidden="true">${i}</span> ${esc(l)}</a>`).join('')}</nav><div style="flex:1"></div><button class="btn sm" data-act="theme">◐ Light / dark</button></aside>
@@ -1240,7 +1310,7 @@ async function startApp() {
   $('#app').innerHTML = '<div class="loading">Loading your data…</div>';
   try { await loadSettings(); await DB.loadAll(); }
   catch (e) { console.error('DailyWell load error:', (e && (e.code || e.name)) || 'unknown'); $('#app').innerHTML = `<div class="land"><div class="card"><h2>We could not load your data</h2><p>${esc(friendly(e))}</p><div class="btns"><button class="btn primary" onclick="location.reload()">Try again</button><button class="btn" data-act="logout">Log out</button></div></div></div>`; return; }
-  S.started = true; S.date = today(); S.page = 'dashboard'; S.fired = new Set(); applyTheme(); shell(); render(); startEngine();
+  S.started = true; S.date = today(); S.page = 'dashboard'; S.fired = new Set(); applyTheme(); shell(); render(); startEngine(); Native.schedule();
   if (!S.set.onboarded) onboarding();
 }
 function setupManifest() {
@@ -1251,7 +1321,7 @@ function setupManifest() {
   } catch (e) { /* optional */ }
 }
 function init() {
-  applyTheme(); setupManifest();
+  Native.init(); applyTheme(); setupManifest();
   window.addEventListener('offline', () => toast('You are offline. Changes cannot be saved until you reconnect.', 'err'));
   window.addEventListener('online', () => toast('Back online.', 'ok'));
   if (window.matchMedia) { try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { applyTheme(); }); } catch (e) { /* old browser */ } }
